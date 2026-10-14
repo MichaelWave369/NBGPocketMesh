@@ -50,14 +50,14 @@ Run `npm run demo:e1a` to train and evaluate a **nine-scalar learned linear syst
 
 **Status: offline-capable evaluation code; no real checkpoint is bundled or exercised by CI.** An independently obtained, locally stored **trusted LlamaForCausalLM Hugging Face safetensors** checkpoint is required. ONNX/GGUF checkpoints do not work with this gate.
 
-Optional prerequisites: Python 3.10+, Node 20+, locally installed packages listed in \`requirements-e1b.txt\`. For CUDA, install a suitable PyTorch build before installing other dependencies. Nothing is installed by the repo's scripts and **no model download is attempted**.
+Optional prerequisites: Python 3.10+, Node 20+, locally installed packages listed in `requirements-e1b.txt`. For CUDA, install a suitable PyTorch build before installing other dependencies. Nothing is installed by the repo's scripts and **no model download is attempted**.
 
-\`\`\`bash
+```bash
 python scripts/e1b_lab.py preflight --model-dir "/path/to/trusted-hf-model"
 python scripts/e1b_lab.py train --model-dir "/path/to/trusted-hf-model" --work-dir "artifacts/local/e1b-new" --device cpu
 python scripts/e1b_lab.py evaluate --model-dir "/path/to/trusted-hf-model" --work-dir "artifacts/local/e1b-new" --device cpu
-\`\`\`
+```
 
-Use \`--device cuda\` explicitly for a CUDA-enabled local installation; a failed CUDA request never silently becomes CPU. Training requires a **new, empty work directory** so existing model/adapter files are not overwritten. Outputs stay in ignored \`artifacts/local\` and include hashes, results and clearly labeled operator-unverified receipts.
+Use `--device cuda` explicitly for a CUDA-enabled local installation; a failed CUDA request never silently becomes CPU. Training requires a **new, empty work directory** so existing model/adapter files are not overwritten. Outputs stay in ignored `artifacts/local` and include hashes, results and clearly labeled operator-unverified receipts.
 
-Run \`python -m unittest discover -s tests_py -v\` for the pure-Python frozen-data contract tests (no model installed). E0 Node routing chooses which local adapter to activate based on declared capability. See [E1-B protocol](docs/E1B_PROTOCOL.md) for all caveats. This is not yet a confirmed LLM inference result, weight transfer improvement, or NBG mathematical validation.
+Run `python -m unittest discover -s tests_py -v` for the pure-Python frozen-data contract tests (no model installed). E0 Node routing chooses which local adapter to activate based on declared capability. See [E1-B protocol](docs/E1B_PROTOCOL.md) for all caveats. This is not yet a confirmed LLM inference result, weight transfer improvement, or NBG mathematical validation.

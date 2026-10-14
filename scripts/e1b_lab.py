@@ -29,7 +29,10 @@ MODEL_EXTENSIONS = {".safetensors", ".json", ".model", ".txt", ".py"}
 SCHEMA = "NBGPocketMesh.E1B.v1"
 
 def require_directory(p: str) -> Path:
-    path = Path(p).expanduser().resolve(strict=True)
+    raw_path = Path(p).expanduser()
+    if raw_path.is_symlink():
+        raise ValueError("Refusing symlinked model directory")
+    path = raw_path.resolve(strict=True)
     if not path.is_dir() or path.is_symlink():
         raise ValueError("Directory must exist and not be a symlink")
     return path

@@ -7,8 +7,8 @@ This protocol builds upon E0 and E1-A with optional real, independently supplied
 ## Frozen data and hypothesis
 
 Two explicit text-classification tasks:
-- \`vowel-start\`: starts with a/e/i/o/u?
-- \`ends-s\`: ends with lowercase "s"?
+- `vowel-start`: starts with a/e/i/o/u?
+- `ends-s`: ends with lowercase "s"?
 
 Train grid: 24 unique lowercase words, repeated across both domains (48 domain/word rows).
 Holdout: 12 different lowercase words, repeated across both domains (24 rows).
@@ -27,13 +27,13 @@ Reload the same local pretrained base plus both saved adapters into memory. Scor
 4. deliberately swapped (wrong task specialist)
 5. E0 selected specialist, using the frozen local manifests.
 
-The E0 bridge runs a fixed local Node subprocess with \`node scripts/e1b-route.mjs <domain>\` and validates route receipts. Both domain-specialist manifests share the same declared lineage. No claim of independently corroborating evidence.
+The E0 bridge runs a fixed local Node subprocess with `node scripts/e1b-route.mjs <domain>` and validates route receipts. Both domain-specialist manifests share the same declared lineage. No claim of independently corroborating evidence.
 
 ## Integrity and results
 
-Local preflight verifies HF config, Llama architecture, tokenizer presence, safetensors and SHA-256 of relevant checkpoint files. Evaluation writes exact counts, p50/p95 measured latency, base/adapter load times, local runtime version, adapter and dataset hashes, E0 routing receipts, and CUDA allocated peak (or null on CPU). Hashes are data integrity references, not cryptographic identity attestation or externally verified evidence. Results are \`OBSERVED_LOCAL_UNVERIFIED\`, authority \`NONE\`.
+Local preflight verifies HF config, Llama architecture, tokenizer presence, safetensors and SHA-256 of relevant checkpoint files. Evaluation writes exact counts, p50/p95 measured latency, base/adapter load times, local runtime version, adapter and dataset hashes, E0 routing receipts, and CUDA allocated peak (or null on CPU). Hashes are data integrity references, not cryptographic identity attestation or externally verified evidence. Results are `OBSERVED_LOCAL_UNVERIFIED`, authority `NONE`.
 
-**Training and evaluation are opt-in and require operator-installed third-party packages and a trusted complete local checkpoint.** Do not run arbitrary downloaded files, grant model code execution, or assume a repo license covers model weights. Force offline modes and local_files_only; do not use a Hugging Face repo ID as \`--model-dir\`.
+**Training and evaluation are opt-in and require operator-installed third-party packages and a trusted complete local checkpoint.** Do not run arbitrary downloaded files, grant model code execution, or assume a repo license covers model weights. Force offline modes and local_files_only; do not use a Hugging Face repo ID as `--model-dir`.
 
 ## Caveats
 
