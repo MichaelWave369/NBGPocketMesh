@@ -15,5 +15,25 @@ jobs:
       - run: npm test
       - run: npm run demo
       - run: npm run demo:e1a
-      - run: python -m py_compile scripts/e1b_lab.py scripts/e1b_dataset.py
+      - run: python -m py_compile scripts/e1b_lab.py scripts/e1b_dataset.py scripts/e1c_audit.py
       - run: python -m unittest discover -s tests_py -v
+
+  windows-contract:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m unittest discover -s tests_py -v
+      - name: Parse the Windows PowerShell runner (no model execution)
+        shell: pwsh
+        run: |
+          $tokens = $null
+          $parseErrors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile(
+            (Resolve-Path scripts/run-e1b-windows.ps1),
+            [ref]$tokens,
+            [ref]$parseErrors
+          ) | Out-Null
+          if ($parseErrors.Count -gt 0) { throw ($parseErrors -join "`n") }
