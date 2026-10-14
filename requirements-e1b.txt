@@ -1,0 +1,5 @@
+# Optional; NOT installed by GitHub CI. Choose a compatible CPU/CUDA torch wheel locally.
+torch>=2.5,<3
+transformers>=4.49,<6
+peft>=0.20,<1
+safetensors>=0.4,<1
