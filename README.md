@@ -39,3 +39,9 @@ See [the frozen E0 protocol](docs/E0_PROTOCOL.md) and upstream [NBG research iss
 E0: deterministic receipt and negative-control unit tests. **E1 requires separate held-out real-inference evaluations**: compare fixed-model, fixed-adapter and routed-adapter baselines with model hashes, accuracy, latency, load overhead, VRAM, failures and cost per correct task. No performance or production claim before those tests.
 
 Original NBG PocketMesh code: MIT. Third-party model weights, if ever used, retain their own licenses. No model weights are included.
+
+## E1-A: First learned teeth (isolated synthetic experiment)
+
+Run `npm run demo:e1a` to train and evaluate a **nine-scalar learned linear system**: three pooled base weights, plus two separate three-scalar specialist deltas. Unlike E0's route-only fixtures, these numerical weights are actually updated by training. E0 selects the declared task specialist; results are compared against pooled, fixed-specialist, and intentionally swapped controls using a disjoint synthetic holdout. The output includes dataset, weight and decision-receipt hashes.
+
+**Not** LoRA, an LLM, a portable PocketBrain adapter, a PhiStream benchmark, or an NBG proof. No network calls or GPU claims. Read the [frozen E1-A protocol](docs/E1A_PROTOCOL.md). Full real-model E1 remains a future validation gate.
