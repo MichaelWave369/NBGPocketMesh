@@ -197,8 +197,7 @@ def evaluate(model_dir, work_dir, device, deps):
     )
     adapter_load_s = time.perf_counter() - t1
     model.eval()
-    if device.type == "cuda":
-        torch.cuda.reset_peak_memory_stats()
+    # Preserve allocation peak from both adapter loading and evaluation.
     route_map = {domain: remote_free_route(domain) for domain in DOMAINS}
     policies = ("base", "fixed-vowel", "fixed-suffix", "wrong-tooth", "routed")
     results = {policy: {"correct": 0, "total": 0, "times_ms": []} for policy in policies}

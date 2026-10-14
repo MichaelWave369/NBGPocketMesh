@@ -1,8 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 
-const script = new URL('../scripts/e1b-route.mjs', import.meta.url).pathname;
+const script = fileURLToPath(new URL('../scripts/e1b-route.mjs', import.meta.url));
 for (const domain of ['vowel-start', 'ends-s']) {
   test('E1-B local-only E0 route for ' + domain, () => {
     const run = spawnSync(process.execPath, [script, domain], {encoding: 'utf8'});
