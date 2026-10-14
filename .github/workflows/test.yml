@@ -1,4 +1,4 @@
-name: E0 tests
+name: E0 and E1-A experiments
 on:
   push:
   pull_request:
@@ -14,3 +14,4 @@ jobs:
           node-version: '22'
       - run: npm test
       - run: npm run demo
+      - run: npm run demo:e1a
