@@ -61,3 +61,22 @@ python scripts/e1b_lab.py evaluate --model-dir "/path/to/trusted-hf-model" --wor
 Use `--device cuda` explicitly for a CUDA-enabled local installation; a failed CUDA request never silently becomes CPU. Training requires a **new, empty work directory** so existing model/adapter files are not overwritten. Outputs stay in ignored `artifacts/local` and include hashes, results and clearly labeled operator-unverified receipts.
 
 Run `python -m unittest discover -s tests_py -v` for the pure-Python frozen-data contract tests (no model installed). E0 Node routing chooses which local adapter to activate based on declared capability. See [E1-B protocol](docs/E1B_PROTOCOL.md) for all caveats. This is not yet a confirmed LLM inference result, weight transfer improvement, or NBG mathematical validation.
+
+## E1-C: Windows local pilot and receipt audit
+
+PR #4 adds an explicit, **operator-controlled** PowerShell wrapper for E1-B
+(`scripts/run-e1b-windows.ps1`) and a dependency-free receipt-consistency
+checker (`scripts/e1c_audit.py`). The wrapper defaults to **preflight only**.
+Training requires `-Action train`, a deliberately supplied local checkpoint,
+and a new output directory. Evaluation and audit are separate commands.
+
+After the local E1-B training and evaluation complete, run:
+
+```powershell
+.\scripts\run-e1b-windows.ps1 -Action audit -ModelDir "D:\Models\TrustedSmallLlama" -WorkDir "D:\PocketMeshTrials\e1b-001"
+```
+
+The audit detects receipt tampering, missing baselines, changed adapter/model
+files, dataset drift, and invalid outcome arithmetic, but **does not** prove
+the underlying model execution occurred or establish performance improvement.
+See [E1-C Windows pilot protocol](docs/E1C_PROTOCOL.md).
