@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ArrowDownRight, ArrowRight, ArrowUpRight, BookOpen, Check, ChevronLeft, ChevronRight, CircleDot, Cpu, ExternalLink, GitBranch, Github, Layers3, LockKeyhole, Network, Pause, Play, RotateCcw, SlidersHorizontal, Sparkles, Terminal, Waves, Zap } from 'lucide-react';
 import { RESULTS, PHASES, TEETH, scenarioAt, routeScenario, accuracy } from './sim.js';
+import { PRECISION_RESULTS } from './precision-results.js';
 
 const REPO = 'https://github.com/MichaelWave369/NBGPocketMesh';
 const RESEARCH = REPO + '/blob/main/docs/E2A_PROTOCOL.md';
@@ -167,6 +168,43 @@ function Evidence() {
     </div>
   </div></section>;
 }
+
+function PrecisionProbe() {
+  const [mode,setMode] = useState('bound');
+  const selected = PRECISION_RESULTS.find(r=>r.id===mode);
+  return <section className="precision-section page-wrap" id="precision">
+    <SectionHeading number="03" eyebrow="adaptive resolution experiment"
+      title={<>One gear. <em>Different precision.</em></>}
+      body="The next PocketMesh numerical experiment packs trained parent-and-child weight bundles into INT4, INT8 and FP32 representations. Explore the recorded results, not a live neural inference service."/>
+    <div className="precision-layout">
+      <div className="precision-chooser">
+        <div className="precision-head"><span>RECORDED E2-P/C VARIANTS</span><Tag tone="amber">Synthetic / CPU</Tag></div>
+        {PRECISION_RESULTS.map(r=><button key={r.id} type="button" className={'precision-choice'+(mode===r.id?' active':'')}
+          onClick={()=>setMode(r.id)} aria-pressed={mode===r.id}>
+          <span><strong>{r.name}</strong><small>{r.correct} / 384 correct</small></span>
+          <span className="precision-choice-end"><span>{r.bytes.toFixed(2)} B</span><ArrowRight size={16}/></span>
+        </button>)}
+        <p className="precision-data-note">B = estimated packed gear payload bytes read per sample, not total RAM or measured transfers.</p>
+      </div>
+      <div className="precision-detail">
+        <div className="precision-detail-head"><div><span className="mono micro muted">SELECTED POLICY</span><h3>{selected.name}</h3></div><Tag tone={selected.mismatch===0?'green':'rose'}>{selected.mismatch===0?'F32 AGREEMENT':'FP32 MISMATCHES'}</Tag></div>
+        <div className="precision-stats">
+          <div><span>ACCURACY</span><strong>{(selected.correct/selected.total*100).toFixed(2)}<small>%</small></strong><small>{selected.correct} / 384</small></div>
+          <div><span>ESCALATIONS</span><strong>{selected.escalations}</strong><small>of 384 examples</small></div>
+          <div><span>PAYLOAD READ</span><strong>{selected.bytes.toFixed(2)}<small> B</small></strong><small>per example, modeled</small></div>
+        </div>
+        <div className="precision-bars">
+          <div className="precision-bar-label"><span>PACKED PAYLOAD RELATIVE TO FP32</span><span>{(selected.bytes / PRECISION_RESULTS[0].bytes *100).toFixed(1)}%</span></div>
+          <div className="precision-rail"><div style={{width:Math.min(100,selected.bytes / PRECISION_RESULTS[0].bytes *100)+'%'}}/></div>
+        </div>
+        <p className="precision-interpretation">{selected.note}</p>
+        <div className="precision-disclosure"><LockKeyhole size={16}/><span>All three precision versions remain resident in the experiment. Error-bound metadata, core/router, decoding and storage overhead are excluded from displayed payload bytes. No physical memory savings or speedup has been demonstrated.</span></div>
+        <a className="precision-protocol-link" href={REPO+'/blob/main/docs/E2PC_PROTOCOL.md'} target="_blank" rel="noreferrer">READ THE E2-P/C PROTOCOL <ArrowUpRight size={15}/></a>
+      </div>
+    </div>
+  </section>;
+}
+
 function Architecture() {
   const stages=[
     {number:'01',icon:<Cpu size={23}/>,title:'An always-resident hub',desc:'A small shared core holds state and controls which compatible specialists may be engaged.'},
@@ -175,7 +213,7 @@ function Architecture() {
     {number:'04',icon:<Network size={23}/>,title:'Budgeted composition',desc:'Up to two parent teeth can cooperate. Invalid or over-budget requests fail closed.'}
   ];
   return <section className="architecture-section page-wrap" id="architecture">
-    <SectionHeading number="03" eyebrow="under the hood" title={<>Small active footprint. <em>Expandable design.</em></>} body="Gear teeth are a model for hierarchical activation, not literal moving parts or proof that knowledge lives in neat swappable chunks."/>
+    <SectionHeading number="04" eyebrow="under the hood" title={<>Small active footprint. <em>Expandable design.</em></>} body="Gear teeth are a model for hierarchical activation, not literal moving parts or proof that knowledge lives in neat swappable chunks."/>
     <div className="architecture-grid">{stages.map(s=><article className="arch-card" key={s.number}><div className="arch-top"><span>{s.number} / SYSTEM</span><span className="arch-icon">{s.icon}</span></div><h3>{s.title}</h3><p>{s.desc}</p><div className="arch-corner"><ArrowDownRight size={20}/></div></article>)}</div>
     <div className="research-banner"><div className="banner-symbol"><BrandMark/></div><div><span className="eyebrow">BUILD IT. BREAK IT. MEASURE IT.</span><h3>The next question is harder.</h3><p>Can hierarchical activation beat flat routing on genuinely ambiguous, fairly supervised, matched-budget tasks? E2-A establishes a runnable foundation. It does not settle that question.</p></div><a className="btn btn-light" href={REPO} target="_blank" rel="noreferrer">VIEW SOURCE <ArrowUpRight size={16}/></a></div>
   </section>;
@@ -192,7 +230,7 @@ export default function App() {
   return <div className="site">
     <header className="site-header"><div className="page-wrap header-inner">
       <a href="#top" className="brand" aria-label="PocketMesh homepage"><BrandMark/><span className="brand-word">POCKET<span>MESH</span><small>BY THE Φ FIELD LAB</small></span></a>
-      <nav className="header-nav" aria-label="Primary navigation"><a href="#lab">The lab</a><a href="#evidence">Evidence</a><a href="#architecture">Architecture</a></nav>
+      <nav className="header-nav" aria-label="Primary navigation"><a href="#lab">The lab</a><a href="#evidence">Evidence</a><a href="#precision">Precision</a><a href="#architecture">Architecture</a></nav>
       <a className="header-github" href={REPO} target="_blank" rel="noreferrer"><Github size={17}/> <span>GITHUB</span> <ArrowUpRight size={15}/></a>
     </div></header>
     <main id="top">
@@ -216,6 +254,7 @@ export default function App() {
       </div></section>
       <Lab {...{index,setIndex,threshold,setThreshold,budget,setBudget,allowChildren,setAllowChildren,allowMacro,setAllowMacro,playing,setPlaying,focus,setFocus}}/>
       <Evidence/>
+      <PrecisionProbe/>
       <Architecture/>
     </main>
     <footer className="site-footer"><div className="page-wrap footer-inner"><div className="footer-brand"><BrandMark small/><span>POCKETMESH</span><small>Nested Bubble Gear · Research console</small></div><div className="footer-links"><a href={REPO} target="_blank" rel="noreferrer"><Github size={16}/> Source</a><a href={RESEARCH} target="_blank" rel="noreferrer"><BookOpen size={16}/> Protocol</a><a href={REPO+'/blob/main/LICENSE'} target="_blank" rel="noreferrer">MIT license <ExternalLink size={14}/></a></div><div className="footer-fine">LEDGER ABOVE EGO. RESULTS ABOVE HYPE.<br/>Synthetic experiment · No real model weights served.</div></div></footer>
