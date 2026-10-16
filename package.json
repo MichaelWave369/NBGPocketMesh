@@ -3,12 +3,13 @@
   "version": "0.2.0-e1a",
   "private": true,
   "type": "module",
-  "description": "Deterministic E0 routing and isolated E1-A synthetic learned-tooth experiment",
+  "description": "Deterministic NBG PocketMesh synthetic capability routing, trained numeric gears, and precision/refinement experiments",
   "scripts": {
     "test": "node --test tests/*.test.mjs",
     "demo": "node scripts/demo.mjs",
     "demo:e1a": "node scripts/learned-teeth-demo.mjs",
-    "demo:e2a": "node scripts/e2a-demo.mjs"
+    "demo:e2a": "node scripts/e2a-demo.mjs",
+    "demo:e2pc": "node scripts/e2pc-demo.mjs"
   },
   "engines": {
     "node": ">=20"
