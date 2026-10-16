@@ -120,3 +120,26 @@ npm run demo:e2pc
 On the frozen synthetic holdout, INT4 changed 3 of 384 FP32 decisions; bounded selective escalation restored FP32 agreement with 6 escalations. Conflict-only escalation still missed one error and unnecessarily escalated 68 cases. The reported selected-payload bytes exclude bound metadata, the shared router, object memory and real transfer costs. All precision bundles stay resident, so **no physical RAM/VRAM saving or latency advantage is claimed**. Read [E2-P/C protocol](docs/E2PC_PROTOCOL.md) for the exact evaluation, caveats, negative controls and frozen results.
 
 The companion React console presents these values as **recorded experiment results** separate from its fixed-threshold browser visualization. Original E0/E1/E2-A code is unchanged.
+
+## E2-K: Numerical Keyhole / Pattern vs Structure
+
+**Status: separate, deterministic algebraic fixture lab, not neural model inference.**
+The new `site/src/pattern-keyhole.js` is shared by the Node E2-K experiment
+and the React **Pattern vs Structure** page section.
+
+- Unit and common-scale invariance of a dimensionless pyramid-style ratio
+- Rotation-invariant length versus frame-dependent coordinates
+- Deliberately misleading decimal-digit coincidences (including a Great Pyramid latitude / SI light-speed *digit resemblance*)
+- A separate conservative scalar quantization-boundary escalation control
+- K0/K1/K2 synthetic budgets and a deliberately naive surface-display baseline
+
+Run `npm run demo:e2k` and `npm test`. Outputs are marked
+`SIMULATED` / authority `NONE`; the CLI prints deterministic SHA-256
+case/precision fixture hashes and a receipt. The site runs these same algebraic
+fixtures in-browser. No user data, real models, trained E2-P/C modules,
+GPU timing, RAM or history claims are involved.
+See [frozen E2-K protocol](docs/E2K_PROTOCOL.md).
+
+This is *not* evidence that ancient pyramid builders knew modern physics,
+that number coincidences are causal, or that an NBG router outperforms simple
+unit normalization. Future untyped and noisy tests must be independently gated.

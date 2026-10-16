@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { ArrowDownRight, ArrowRight, ArrowUpRight, BookOpen, Check, ChevronLeft, ChevronRight, CircleDot, Cpu, ExternalLink, GitBranch, Github, Layers3, LockKeyhole, Network, Pause, Play, RotateCcw, SlidersHorizontal, Sparkles, Terminal, Waves, Zap } from 'lucide-react';
 import { RESULTS, PHASES, TEETH, scenarioAt, routeScenario, accuracy } from './sim.js';
 import { PRECISION_RESULTS } from './precision-results.js';
+import { KEYHOLE_CASES, inspectCase, experiment as keyholeExperiment } from './pattern-keyhole.js';
 
 const REPO = 'https://github.com/MichaelWave369/NBGPocketMesh';
 const RESEARCH = REPO + '/blob/main/docs/E2A_PROTOCOL.md';
@@ -205,6 +206,96 @@ function PrecisionProbe() {
   </section>;
 }
 
+function KeyholePatternLab() {
+  const [family,setFamily] = useState('ratio');
+  const [caseId,setCaseId] = useState(KEYHOLE_CASES[0].id);
+  const [budget,setBudget] = useState(6);
+  const frozen = useMemo(()=>keyholeExperiment(),[]);
+  const cases = KEYHOLE_CASES.filter(c=>c.family===family);
+  const selected = cases.find(c=>c.id===caseId) || cases[0];
+  const observation = useMemo(()=>inspectCase(selected,budget),[selected,budget]);
+  const source = selected.family==='ratio'
+    ? 'base '+selected.base+' / height '+selected.height+' (common original units)'
+    : selected.family==='rotation'
+      ? 'vector ('+selected.vector.join(', ')+')'
+      : selected.a+' (displayed number) vs '+selected.b+' (different-dimensional number)';
+  const transformed = selected.family==='ratio'
+    ? 'base '+Number((selected.base*selected.factor).toPrecision(9))+
+      ' / height '+Number((selected.height*selected.factor).toPrecision(9))
+    : selected.family==='rotation'
+      ? 'vector after '+selected.angle+'° frame rotation; '+selected.measure+' is tested'
+      : selected.b+' metres/s → '+(Number(selected.b)/1609.344).toFixed(4)+' miles/s';
+  const outcomeName = {
+    INVARIANT:'STRUCTURE PRESERVED',
+    FRAME_DEPENDENT:'FRAME-DEPENDENT',
+    SURFACE_ONLY:'SURFACE RESEMBLANCE',
+    CHANGED:'STRUCTURE CHANGED',
+    UNRESOLVED:'INSUFFICIENT EVIDENCE'
+  };
+  return <section className="pattern-section" id="patterns"><div className="page-wrap">
+    <SectionHeading number="04" eyebrow="numerical keyhole / E2-K"
+      title={<>Pattern or <em>structure?</em></>}
+      body="Test whether a relationship survives changes of units, coordinate frames or numerical precision. A matching string of digits is not, by itself, a physical relationship. This is a runnable algebraic demonstration, not model inference."/>
+    <div className="pattern-shell">
+      <aside className="pattern-control">
+        <div className="pattern-control-head"><span className="mono micro">OBSERVATION / THREE KEYHOLES</span><Tag tone="amber">Synthetic fixtures</Tag></div>
+        <div className="pattern-label">CHOOSE A FAMILY</div>
+        <div className="pattern-families">
+          {[['ratio','Dimensionless ratios'],['rotation','Rotated geometry'],['digits','Digit coincidences']].map(([id,label])=><button
+            key={id} type="button" className={family===id?'current':''} aria-pressed={family===id}
+            onClick={()=>{setFamily(id);setCaseId(KEYHOLE_CASES.find(c=>c.family===id).id);}}>
+            {label}</button>)}
+        </div>
+        <label htmlFor="keyhole-scenario" className="pattern-label">TRANSFORMATION FIXTURE</label>
+        <select id="keyhole-scenario" className="pattern-select" value={selected.id}
+          onChange={e=>setCaseId(e.target.value)}>
+          {cases.map(c=><option value={c.id} key={c.id}>{c.name}</option>)}
+        </select>
+        <div className="pattern-label pattern-depth-label">COMPUTE BUDGET (SYNTHETIC)</div>
+        <div className="pattern-depths" aria-label="Keyhole inspection budget">
+          {[[1,'K0','Surface'],[3,'K1','Typed'],[6,'K2','Challenge']].map(([n,label,note])=><button
+            key={n} type="button" className={budget===n?'current':''} aria-pressed={budget===n} onClick={()=>setBudget(n)}>
+            <strong>{label}</strong><small>{note}</small><span>{n} units</span></button>)}
+        </div>
+        <p className="pattern-caveat">K0 is always preliminary. A deeper Keyhole uses explicitly supplied task-type information, so a perfect score would not demonstrate general-purpose intelligence.</p>
+      </aside>
+      <div className="pattern-visual">
+        <div className="pattern-visual-head"><span className="mono micro muted">METAMORPHIC PROBE / {selected.id.toUpperCase()}</span>
+          <Tag tone={observation.decision==='UNRESOLVED'?'amber':observation.decision==='INVARIANT'?'green':'cyan'}>{observation.depth}</Tag>
+        </div>
+        <div className="pattern-comparison">
+          <div><span className="mono micro muted">ORIGINAL VIEW</span><strong>{source}</strong></div>
+          <div className="pattern-transform-icon"><ArrowRight size={21}/></div>
+          <div><span className="mono micro muted">TRANSFORMED VIEW</span><strong>{transformed}</strong></div>
+        </div>
+        <div className="pattern-outcome">
+          <span className="mono micro muted">CURRENT VERDICT</span>
+          <h3>{outcomeName[observation.decision]}</h3>
+          <p>{observation.evidence}</p>
+          {observation.observations&&<div className="pattern-numbers"><div>BEFORE <b>{String(observation.observations.before)}</b></div><div>AFTER <b>{String(observation.observations.after)}</b></div></div>}
+          {budget===1&&<p className="pattern-unstated">The surface guess is {observation.preliminary.toLowerCase().replaceAll('_',' ')}. It is deliberately NOT promoted to evidence.</p>}
+          {budget>1&&<p className="pattern-interpretation">{selected.note}</p>}
+        </div>
+        <div className="pattern-result-band">
+          <span><CircleDot size={15}/> {observation.cost} SYNTHETIC COST UNITS</span>
+          <span><LockKeyhole size={15}/> {budget===1?'NO ASSERTION':'TYPED MATHEMATICAL CONTRACT'}</span>
+        </div>
+      </div>
+    </div>
+    <div className="pattern-ledger">
+      <div className="pattern-ledger-head"><div><span className="mono micro muted">FROZEN 15-CASE BENCHMARK</span><h3>What survives the challenge?</h3></div><Tag tone="cyan">No trained router</Tag></div>
+      <div className="pattern-ledger-stats">
+        <div><span>NAIVE DISPLAY GUESS</span><strong>{frozen.policies.naive.correct}<small> / {frozen.fixtureCount}</small></strong></div>
+        <div><span>TYPED CONTRACT</span><strong>{frozen.policies.typed.correct}<small> / {frozen.fixtureCount}</small></strong></div>
+        <div><span>TRANSFORMATION CHECK</span><strong>{frozen.policies.challenged.correct}<small> / {frozen.fixtureCount}</small></strong></div>
+        <div><span>BOUNDED SIGN MISMATCHES</span><strong>{frozen.quantization.boundedDisagreements}<small> / {frozen.quantization.total}</small></strong></div>
+      </div>
+      <p><strong>Claim boundary:</strong> These are hand-authored, family-labeled algebraic fixtures. The typed validator is given information the naive baseline lacks. Near-boundary precision uses a separate scalar toy, not E2-P/C's trained gear weights. No learned-model gain, historical conclusion, measured VRAM saving, or NBG closure is claimed.</p>
+      <a href={REPO+'/blob/main/docs/E2K_PROTOCOL.md'} target="_blank" rel="noreferrer">READ THE FROZEN E2-K PROTOCOL <ArrowUpRight size={15}/></a>
+    </div>
+  </div></section>;
+}
+
 function Architecture() {
   const stages=[
     {number:'01',icon:<Cpu size={23}/>,title:'An always-resident hub',desc:'A small shared core holds state and controls which compatible specialists may be engaged.'},
@@ -213,7 +304,7 @@ function Architecture() {
     {number:'04',icon:<Network size={23}/>,title:'Budgeted composition',desc:'Up to two parent teeth can cooperate. Invalid or over-budget requests fail closed.'}
   ];
   return <section className="architecture-section page-wrap" id="architecture">
-    <SectionHeading number="04" eyebrow="under the hood" title={<>Small active footprint. <em>Expandable design.</em></>} body="Gear teeth are a model for hierarchical activation, not literal moving parts or proof that knowledge lives in neat swappable chunks."/>
+    <SectionHeading number="05" eyebrow="under the hood" title={<>Small active footprint. <em>Expandable design.</em></>} body="Gear teeth are a model for hierarchical activation, not literal moving parts or proof that knowledge lives in neat swappable chunks."/>
     <div className="architecture-grid">{stages.map(s=><article className="arch-card" key={s.number}><div className="arch-top"><span>{s.number} / SYSTEM</span><span className="arch-icon">{s.icon}</span></div><h3>{s.title}</h3><p>{s.desc}</p><div className="arch-corner"><ArrowDownRight size={20}/></div></article>)}</div>
     <div className="research-banner"><div className="banner-symbol"><BrandMark/></div><div><span className="eyebrow">BUILD IT. BREAK IT. MEASURE IT.</span><h3>The next question is harder.</h3><p>Can hierarchical activation beat flat routing on genuinely ambiguous, fairly supervised, matched-budget tasks? E2-A establishes a runnable foundation. It does not settle that question.</p></div><a className="btn btn-light" href={REPO} target="_blank" rel="noreferrer">VIEW SOURCE <ArrowUpRight size={16}/></a></div>
   </section>;
@@ -230,7 +321,7 @@ export default function App() {
   return <div className="site">
     <header className="site-header"><div className="page-wrap header-inner">
       <a href="#top" className="brand" aria-label="PocketMesh homepage"><BrandMark/><span className="brand-word">POCKET<span>MESH</span><small>BY THE Φ FIELD LAB</small></span></a>
-      <nav className="header-nav" aria-label="Primary navigation"><a href="#lab">The lab</a><a href="#evidence">Evidence</a><a href="#precision">Precision</a><a href="#architecture">Architecture</a></nav>
+      <nav className="header-nav" aria-label="Primary navigation"><a href="#lab">The lab</a><a href="#evidence">Evidence</a><a href="#precision">Precision</a><a href="#patterns">Patterns</a><a href="#architecture">Architecture</a></nav>
       <a className="header-github" href={REPO} target="_blank" rel="noreferrer"><Github size={17}/> <span>GITHUB</span> <ArrowUpRight size={15}/></a>
     </div></header>
     <main id="top">
@@ -255,6 +346,7 @@ export default function App() {
       <Lab {...{index,setIndex,threshold,setThreshold,budget,setBudget,allowChildren,setAllowChildren,allowMacro,setAllowMacro,playing,setPlaying,focus,setFocus}}/>
       <Evidence/>
       <PrecisionProbe/>
+      <KeyholePatternLab/>
       <Architecture/>
     </main>
     <footer className="site-footer"><div className="page-wrap footer-inner"><div className="footer-brand"><BrandMark small/><span>POCKETMESH</span><small>Nested Bubble Gear · Research console</small></div><div className="footer-links"><a href={REPO} target="_blank" rel="noreferrer"><Github size={16}/> Source</a><a href={RESEARCH} target="_blank" rel="noreferrer"><BookOpen size={16}/> Protocol</a><a href={REPO+'/blob/main/LICENSE'} target="_blank" rel="noreferrer">MIT license <ExternalLink size={14}/></a></div><div className="footer-fine">LEDGER ABOVE EGO. RESULTS ABOVE HYPE.<br/>Synthetic experiment · No real model weights served.</div></div></footer>
