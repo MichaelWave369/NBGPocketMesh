@@ -107,3 +107,16 @@ npm run build --prefix site
 ```
 
 After the site PR is merged and GitHub Pages is configured to use **GitHub Actions**, the intended public location is [PocketMesh Pages](https://michaelwave369.github.io/NBGPocketMesh/). If that URL does not yet resolve, check **Settings → Pages → Build and deployment → GitHub Actions** and the `PocketMesh React Pages` workflow. The link is a deployment target, not proof the page is currently online.
+
+## E2-P/C: Quantized nested teeth and contradiction-proxy experiment
+
+**Status: isolated, CPU synthetic numerical experiment. No production or GPU inference claim.** Extends trained E2-A tooth bundles into real numeric INT4 (signed packed), INT8 and FP32 representations with a conservative quantization-error-bound precision escalation policy. It also tests an opposing-sign `conflict` proxy suggested by conceptual Super Φ.Vessel work. That proxy is **not** verified truth detection or real coherence.
+
+```sh
+npm test
+npm run demo:e2pc
+```
+
+On the frozen synthetic holdout, INT4 changed 3 of 384 FP32 decisions; bounded selective escalation restored FP32 agreement with 6 escalations. Conflict-only escalation still missed one error and unnecessarily escalated 68 cases. The reported selected-payload bytes exclude bound metadata, the shared router, object memory and real transfer costs. All precision bundles stay resident, so **no physical RAM/VRAM saving or latency advantage is claimed**. Read [E2-P/C protocol](docs/E2PC_PROTOCOL.md) for the exact evaluation, caveats, negative controls and frozen results.
+
+The companion React console presents these values as **recorded experiment results** separate from its fixed-threshold browser visualization. Original E0/E1/E2-A code is unchanged.
