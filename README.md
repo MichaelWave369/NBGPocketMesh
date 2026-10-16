@@ -80,3 +80,15 @@ The audit detects receipt tampering, missing baselines, changed adapter/model
 files, dataset drift, and invalid outcome arithmetic, but **does not** prove
 the underlying model execution occurred or establish performance improvement.
 See [E1-C Windows pilot protocol](docs/E1C_PROTOCOL.md).
+
+## E2-A: Elastic nested teeth (CPU synthetic numerical pilot)
+
+**Status: runnable isolated experiment, not an LLM or verified performance gain.** Six trained parent modules, three trained potential child residuals per parent, two learned cue routers, and two-parent macro tasks. No third-party packages or checkpoint download.
+
+```sh
+npm test
+npm run demo:e2a
+npm run demo:e2a -- --timed
+```
+
+Seven frozen comparisons: core, dense, flat specialist, learned hierarchy, no child, no macro, and fixed-rule routing. The first 384-example synthetic holdout gave 384/384 for both the learned hierarchy **and the fixed-rule hierarchy**; learned routing showed **no advantage** on this easy task. Training uses privileged teacher-factor targets, so these results do not validate superior intelligence, fair model efficiency, NBG mathematical closure, real neural weight streaming, or GPU inference. See [E2-A protocol](docs/E2A_PROTOCOL.md) for data, metrics, failure controls, and explicit nonclaims. Broader speculative design remains [E2 draft PR #5](https://github.com/MichaelWave369/NBGPocketMesh/pull/5).
