@@ -92,3 +92,18 @@ npm run demo:e2a -- --timed
 ```
 
 Seven frozen comparisons: core, dense, flat specialist, learned hierarchy, no child, no macro, and fixed-rule routing. The first 384-example synthetic holdout gave 384/384 for both the learned hierarchy **and the fixed-rule hierarchy**; learned routing showed **no advantage** on this easy task. Training uses privileged teacher-factor targets, so these results do not validate superior intelligence, fair model efficiency, NBG mathematical closure, real neural weight streaming, or GPU inference. See [E2-A protocol](docs/E2A_PROTOCOL.md) for data, metrics, failure controls, and explicit nonclaims. Broader speculative design remains [E2 draft PR #5](https://github.com/MichaelWave369/NBGPocketMesh/pull/5).
+
+## Live React research console (GitHub Pages)
+
+The `site/` folder contains an original React/Vite research dashboard for E2-A: responsive radial gear topology, interactive synthetic threshold/budget routing controls, and a transparent comparison chart of all seven frozen numerical baselines. **The browser's visual route sandbox is illustrative fixed-threshold logic, not actual pretrained or learned E2-A model inference.** The dashboard labels the privileged teacher supervision and the fixed-rule router's tie with the learned hierarchy.
+
+Local development:
+
+```sh
+npm install --prefix site
+npm run dev --prefix site
+npm run test --prefix site
+npm run build --prefix site
+```
+
+After the site PR is merged and GitHub Pages is configured to use **GitHub Actions**, the intended public location is [PocketMesh Pages](https://michaelwave369.github.io/NBGPocketMesh/). If that URL does not yet resolve, check **Settings → Pages → Build and deployment → GitHub Actions** and the `PocketMesh React Pages` workflow. The link is a deployment target, not proof the page is currently online.
