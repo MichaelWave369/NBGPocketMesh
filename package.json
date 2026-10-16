@@ -7,8 +7,11 @@
   "scripts": {
     "test": "node --test tests/*.test.mjs",
     "demo": "node scripts/demo.mjs",
-    "demo:e1a": "node scripts/learned-teeth-demo.mjs"
+    "demo:e1a": "node scripts/learned-teeth-demo.mjs",
+    "demo:e2a": "node scripts/e2a-demo.mjs"
   },
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "license": "MIT"
 }
