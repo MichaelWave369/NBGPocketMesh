@@ -1,0 +1,32 @@
+name: React console checks
+on:
+  pull_request:
+    paths:
+      - 'site/**'
+      - '.github/workflows/site-check.yml'
+      - '.github/workflows/pages.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'site/**'
+      - '.github/workflows/site-check.yml'
+permissions:
+  contents: read
+jobs:
+  site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install frontend dependencies
+        run: npm install --prefix site --no-audit --no-fund
+      - name: Test routing sandbox contracts
+        run: npm run test --prefix site
+      - name: Build production React bundle
+        run: npm run build --prefix site
+      - name: Verify Pages path and bundle
+        run: |
+          test -f site/dist/index.html
+          grep -q '/NBGPocketMesh/assets/' site/dist/index.html
