@@ -22,3 +22,11 @@ test('independent numerical near-boundary control escalates',()=>{
   assert.equal(precisionCheck(-0.021).boundedSign,-1);
   assert.equal(precisionCheck(-0.45).escalated,false);
 });
+
+test('browser K2 pays for an additional adversarial probe, not just a label',()=>{
+  const sample=KEYHOLE_CASES.find(c=>c.id==='latitude-light');
+  assert.equal(inspectCase(sample,3).challenge,undefined);
+  const k2=inspectCase(sample,6);
+  assert.equal(k2.challenge.kind,'ALTERNATE_UNITS');
+  assert.equal(k2.challenge.pass,true);
+});

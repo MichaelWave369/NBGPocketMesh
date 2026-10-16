@@ -79,3 +79,14 @@ test('all fixed algebraic controls have explicit baselines and stable outputs',(
   assert.ok(a.policies.naive.correct < a.fixtureCount);
   assert.equal(a.quantization.boundedDisagreements,0);
 });
+
+test('K2 actually executes a second independently parameterized transform',()=>{
+  for(const c of KEYHOLE_CASES){
+    const k1=inspectCase(c,3),k2=inspectCase(c,6);
+    assert.equal(k1.challenge,undefined);
+    assert.ok(k2.challenge);
+    assert.equal(k2.challenge.pass,true,c.id);
+    assert.equal(k2.decision,c.expected);
+    assert.ok(['SECOND_SCALE','INDEPENDENT_FRAME','ALTERNATE_UNITS'].includes(k2.challenge.kind));
+  }
+});

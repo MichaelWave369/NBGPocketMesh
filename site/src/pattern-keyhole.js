@@ -86,6 +86,38 @@ export function structuralProbe(c) {
     transformedDisplay:speedInMilesPerSecond};
 }
 
+
+export function adversarialChallenge(c) {
+  requireCase(c);
+  const first=structuralProbe(c);
+  if(c.family==='ratio'){
+    // Apply an *additional* common rescale to the second representation.
+    const secondScale=0.37;
+    const secondRatio=4*((c.endBase??c.base*c.factor)*secondScale)/
+      (2*((c.endHeight??c.height*c.factor)*secondScale));
+    const agreesWithBaseline=close(first.before,secondRatio);
+    return {kind:'SECOND_SCALE',pass:agreesWithBaseline===first.stable,
+      confirms:first.stable?'DIMENSIONLESS_RATIO_PRESERVED':'GEOMETRY_DISCREPANCY_PERSISTS',
+      secondMeasurement:secondRatio};
+  }
+  if(c.family==='rotation'){
+    const alternativeAngle=c.angle===90?180:90;
+    const [x,y]=rotate(c.vector,alternativeAngle);
+    const alternative=c.measure==='norm'?Math.hypot(x,y):x;
+    const stable=close(first.before,alternative);
+    return {kind:'INDEPENDENT_FRAME',pass:stable===(c.measure==='norm'),
+      confirms:stable?'NORM_PRESERVED':'COORDINATE_TRANSFORMS',
+      secondMeasurement:alternative};
+  }
+  // Distinct second conversion: metres/second to kilometres/hour,
+  // not another power-of-ten decimal-point shift.
+  const kmPerHour=String(Number(c.b)*3.6);
+  const secondMatch=digits(c.a)===digits(kmPerHour);
+  return {kind:'ALTERNATE_UNITS',pass:!secondMatch,
+    confirms:secondMatch?'DIGIT_PATTERN_PERSISTS':'DIGIT_PATTERN_BREAKS',
+    secondMeasurement:kmPerHour};
+}
+
 export function inspectCase(c, budget=6) {
   requireCase(c);
   if (![1,3,6].includes(budget)) throw new RangeError('Keyhole budget must be 1, 3 or 6 synthetic units');
@@ -97,7 +129,7 @@ export function inspectCase(c, budget=6) {
     evidence:probe.test,observations:{before:probe.before,after:probe.after}};
   return {id:c.id,depth:'K2',cost:6,preliminary,decision:probe.decision,
     evidence:probe.test,observations:{before:probe.before,after:probe.after},
-    transformChecked:true,transformedDisplay:probe.transformedDisplay??null};
+    transformChecked:true,challenge:adversarialChallenge(c),transformedDisplay:probe.transformedDisplay??null};
 }
 
 // Numerical toy of a precision policy; NOT the trained E2-P/C weights.

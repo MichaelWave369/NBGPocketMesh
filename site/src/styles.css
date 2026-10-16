@@ -95,3 +95,7 @@
 .pattern-comparison{grid-template-columns:1fr;gap:8px}.pattern-comparison>div:not(.pattern-transform-icon){min-height:0}.pattern-transform-icon{transform:rotate(90deg)}
 .pattern-ledger-stats{grid-template-columns:1fr 1fr}.pattern-ledger-stats strong{font-size:26px}
 .pattern-depths button{padding:10px 4px}.pattern-depths small{font-size:10px}}
+
+.pattern-second-probe{border:1px solid #2e665c;background:#11312c66;border-radius:5px;margin-top:16px;padding:16px;display:flex;flex-direction:column;gap:8px}
+.pattern-second-probe strong{font:500 14px var(--mono);color:#b2f0d9}
+.pattern-second-probe small{font-size:11px;line-height:1.6;color:#93bcad;overflow-wrap:anywhere}

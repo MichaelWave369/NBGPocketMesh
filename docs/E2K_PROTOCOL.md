@@ -20,7 +20,7 @@ The fixtures are hand-authored and contain explicit family/type metadata. The ty
 
 - **K0 (cost 1 synthetic unit)**: naïvely compare written values/digits; this produces a *preliminary guess only*. Public API returns `UNRESOLVED`, regardless of resemblance.
 - **K1 (cumulative cost 3)**: use declared structural/units/frame metadata and compare the numerical contract. May return `INVARIANT`, `FRAME_DEPENDENT`, `SURFACE_ONLY`, or `CHANGED`.
-- **K2 (cumulative cost 6)**: expose the explicit transformation probe and comparison; for decoys, show that apparent digits change in an alternative unit. K2 does not independently authenticate semantics, underlying measurements, or provenance.
+- **K2 (cumulative cost 6)**: run an additional deterministic adversarial challenge beyond K1. Ratio cases apply a second common scale to the transformed dimensions; rotation cases use a second quarter-turn reference frame; digit decoys additionally convert the SI speed-like number to kilometres/hour (distinct from K1's miles/second conversion). This checks **specified metamorphic contracts**, not independent observational evidence. K2 does not authenticate historical claims, measurement sources or provenance.
 - **Baseline:** a deliberately naive raw visual matching method. It is *supposed* to be susceptible to superficial matches and unit transforms.
 - **Typed and challenged:** same mathematically typed validator; comparing these to naive is a demonstration of extra input information, **not** evidence of a smarter router. K2 primarily adds visibility and stress-test evidence.
 

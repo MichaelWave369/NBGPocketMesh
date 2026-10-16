@@ -276,6 +276,11 @@ function KeyholePatternLab() {
           {budget===1&&<p className="pattern-unstated">The surface guess is {observation.preliminary.toLowerCase().replaceAll('_',' ')}. It is deliberately NOT promoted to evidence.</p>}
           {budget>1&&<p className="pattern-interpretation">{selected.note}</p>}
         </div>
+        {observation.challenge&&<div className="pattern-second-probe">
+          <span className="mono micro muted">ADDITIONAL K2 CHALLENGE / {observation.challenge.kind}</span>
+          <strong>{observation.challenge.pass?'CHECK PASSED':'CHALLENGE FAILED'}</strong>
+          <small>{observation.challenge.confirms} · Second measurement: {String(observation.challenge.secondMeasurement)}</small>
+        </div>}
         <div className="pattern-result-band">
           <span><CircleDot size={15}/> {observation.cost} SYNTHETIC COST UNITS</span>
           <span><LockKeyhole size={15}/> {budget===1?'NO ASSERTION':'TYPED MATHEMATICAL CONTRACT'}</span>
