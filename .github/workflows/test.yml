@@ -15,6 +15,7 @@ jobs:
       - run: npm test
       - run: npm run demo
       - run: npm run demo:e1a
+      - run: npm run demo:e2k
       - run: python -m py_compile scripts/e1b_lab.py scripts/e1b_dataset.py scripts/e1c_audit.py
       - run: python -m unittest discover -s tests_py -v
 
