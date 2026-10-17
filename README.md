@@ -143,3 +143,19 @@ See [frozen E2-K protocol](docs/E2K_PROTOCOL.md).
 This is *not* evidence that ancient pyramid builders knew modern physics,
 that number coincidences are causal, or that an NBG router outperforms simple
 unit normalization. Future untyped and noisy tests must be independently gated.
+
+## E2-KB: blind-text Keyhole selection (synthetic)
+
+A separate, locally trained multinomial Naive Bayes router now takes **only
+question text**, not an E2-K fixture family label, and selects a possible
+mathematical inspection category or abstains. Its learned scores are not
+calibrated confidence and **it does not execute a math solver**.
+
+It uses a frozen 60/20/40 train/validation/holdout partition and compares
+the learned route with fixed lexical rules and always-abstain. The React
+research console also includes a **Which gear should wake?** text-only
+sandbox and recorded results.
+
+Run `npm run demo:e2kb` to see the reproducible, SHA-256-stamped
+synthetic comparison. See [the E2-KB protocol](docs/E2KB_PROTOCOL.md).
+No prior experiment, model checkpoint or adjoining repository is changed.

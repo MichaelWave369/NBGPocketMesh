@@ -3,6 +3,7 @@ import { ArrowDownRight, ArrowRight, ArrowUpRight, BookOpen, Check, ChevronLeft,
 import { RESULTS, PHASES, TEETH, scenarioAt, routeScenario, accuracy } from './sim.js';
 import { PRECISION_RESULTS } from './precision-results.js';
 import { KEYHOLE_CASES, inspectCase, experiment as keyholeExperiment } from './pattern-keyhole.js';
+import {benchmark as blindBenchmark,train as trainBlind,infer as blindInfer,fixed as fixedBlind} from './blind-keyhole.js';
 
 const REPO = 'https://github.com/MichaelWave369/NBGPocketMesh';
 const RESEARCH = REPO + '/blob/main/docs/E2A_PROTOCOL.md';
@@ -301,6 +302,51 @@ function KeyholePatternLab() {
   </div></section>;
 }
 
+function BlindKeyholeLab() {
+  const [question,setQuestion]=useState('If a pyramid is enlarged uniformly, does its dimensionless shape ratio change?');
+  const trained=useMemo(()=>trainBlind(),[]);
+  const evidence=useMemo(()=>blindBenchmark(),[]);
+  const usable=question.trim().length>=12 && question.length<=400;
+  const guess=useMemo(()=>usable?blindInfer(trained,question,evidence.validationSelectedMargin):null,
+    [trained,question,usable,evidence.validationSelectedMargin]);
+  const rules=useMemo(()=>usable?fixedBlind(question):null,[question,usable]);
+  const labels={ratio:'Dimensionless ratio',rotation:'Rotation / coordinate frame',
+    digits:'Digit coincidence',precision:'Precision / rounding',ABSTAIN:'Abstain / request clarification'};
+  return <section className="blind-section page-wrap" id="blind-keyhole">
+    <SectionHeading number="05" eyebrow="E2-KB / blind routing trial"
+      title={<>Which gear <em>should wake?</em></>}
+      body="Unlike the typed E2-K fixtures, this small statistical classifier sees only your question text. It picks a possible inspection family or abstains. No mathematical answer is executed here."/>
+    <div className="blind-grid">
+      <div className="blind-panel">
+        <div className="blind-panel-head"><span className="mono micro muted">TEXT ONLY / NO TASK LABEL</span><Tag tone="amber">Toy-trained router</Tag></div>
+        <label htmlFor="blind-question">ASK ABOUT A MATHEMATICAL RELATIONSHIP</label>
+        <textarea id="blind-question" rows={4} maxLength={400} value={question}
+          onChange={e=>setQuestion(e.target.value)} placeholder="Describe a dimensionless ratio, rotated vector, number coincidence or rounding concern."/>
+        <div className="blind-results">
+          <div><span>LEARNED ROUTER</span><strong>{guess?labels[guess.family]:'Awaiting longer text'}</strong>
+            <small>{guess?'N-gram score gap: '+guess.evidenceGap+' · not calibrated confidence':'12 to 400 characters required'}</small></div>
+          <div><span>FIXED-RULE CONTROL</span><strong>{rules?labels[rules.family]:'Awaiting longer text'}</strong>
+            <small>{rules?rules.reason.replaceAll('_',' ').toLowerCase():'No route attempted'}</small></div>
+        </div>
+        <p className="blind-warning">This is an untrusted, tiny research classifier. It does not assess whether your claim is true, run neural specialists, or reliably handle arbitrary prompts. Inputs stay in this browser session.</p>
+      </div>
+      <div className="blind-ledger">
+        <div className="blind-panel-head"><span className="mono micro muted">FROZEN TEXT HOLDOUT / {evidence.splits.holdout} EXAMPLES</span><Tag tone="cyan">No LLM</Tag></div>
+        {[['alwaysAbstain','Always abstain'],['fixed','Fixed lexical rules'],['learned','Learned n-gram router']].map(([id,label])=>{
+          const r=evidence.comparison[id];
+          return <div className="blind-ledger-row" key={id}>
+            <div><strong>{label}</strong><span>{r.correct} correct · {r.wrong} wrong · {r.abstainedKnown} known-task abstentions</span></div>
+            <div className="blind-bar"><i style={{width:(r.correct/r.total*100)+'%'}}/></div>
+            <strong className="blind-percentage">{(r.correct/r.total*100).toFixed(1)}%</strong>
+          </div>;
+        })}
+        <p><strong>Important:</strong> The learned threshold was selected using separate validation examples. The prompts were still hand-authored with related vocabulary. These are not evidence of reliable open-domain routing, calibrated certainty or a performance advantage on real language models.</p>
+        <a href={REPO+'/blob/main/docs/E2KB_PROTOCOL.md'} target="_blank" rel="noreferrer">READ THE E2-KB PROTOCOL <ArrowUpRight size={15}/></a>
+      </div>
+    </div>
+  </section>;
+}
+
 function Architecture() {
   const stages=[
     {number:'01',icon:<Cpu size={23}/>,title:'An always-resident hub',desc:'A small shared core holds state and controls which compatible specialists may be engaged.'},
@@ -309,7 +355,7 @@ function Architecture() {
     {number:'04',icon:<Network size={23}/>,title:'Budgeted composition',desc:'Up to two parent teeth can cooperate. Invalid or over-budget requests fail closed.'}
   ];
   return <section className="architecture-section page-wrap" id="architecture">
-    <SectionHeading number="05" eyebrow="under the hood" title={<>Small active footprint. <em>Expandable design.</em></>} body="Gear teeth are a model for hierarchical activation, not literal moving parts or proof that knowledge lives in neat swappable chunks."/>
+    <SectionHeading number="06" eyebrow="under the hood" title={<>Small active footprint. <em>Expandable design.</em></>} body="Gear teeth are a model for hierarchical activation, not literal moving parts or proof that knowledge lives in neat swappable chunks."/>
     <div className="architecture-grid">{stages.map(s=><article className="arch-card" key={s.number}><div className="arch-top"><span>{s.number} / SYSTEM</span><span className="arch-icon">{s.icon}</span></div><h3>{s.title}</h3><p>{s.desc}</p><div className="arch-corner"><ArrowDownRight size={20}/></div></article>)}</div>
     <div className="research-banner"><div className="banner-symbol"><BrandMark/></div><div><span className="eyebrow">BUILD IT. BREAK IT. MEASURE IT.</span><h3>The next question is harder.</h3><p>Can hierarchical activation beat flat routing on genuinely ambiguous, fairly supervised, matched-budget tasks? E2-A establishes a runnable foundation. It does not settle that question.</p></div><a className="btn btn-light" href={REPO} target="_blank" rel="noreferrer">VIEW SOURCE <ArrowUpRight size={16}/></a></div>
   </section>;
@@ -352,6 +398,7 @@ export default function App() {
       <Evidence/>
       <PrecisionProbe/>
       <KeyholePatternLab/>
+      <BlindKeyholeLab/>
       <Architecture/>
     </main>
     <footer className="site-footer"><div className="page-wrap footer-inner"><div className="footer-brand"><BrandMark small/><span>POCKETMESH</span><small>Nested Bubble Gear · Research console</small></div><div className="footer-links"><a href={REPO} target="_blank" rel="noreferrer"><Github size={16}/> Source</a><a href={RESEARCH} target="_blank" rel="noreferrer"><BookOpen size={16}/> Protocol</a><a href={REPO+'/blob/main/LICENSE'} target="_blank" rel="noreferrer">MIT license <ExternalLink size={14}/></a></div><div className="footer-fine">LEDGER ABOVE EGO. RESULTS ABOVE HYPE.<br/>Synthetic experiment · No real model weights served.</div></div></footer>
