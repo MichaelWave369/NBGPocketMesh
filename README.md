@@ -159,3 +159,7 @@ sandbox and recorded results.
 Run `npm run demo:e2kb` to see the reproducible, SHA-256-stamped
 synthetic comparison. See [the E2-KB protocol](docs/E2KB_PROTOCOL.md).
 No prior experiment, model checkpoint or adjoining repository is changed.
+
+## NBG-FLEET-OBS-01 E0 · Five-project Research Council (synthetic)
+
+The [frozen Research Council Keyhole protocol](docs/FLEET_COUNCIL_E0.md) adds a deterministic, test-covered comparison where equal aggregate performance conceals different subgroup outcomes. Proposed ThinkTank, PocketBrain, Vessie, BrainC, and GAIA roles are kept separate from actual integration, execution authority, and scientific evidence. Run `node --test tests/council-e0.test.mjs` or `npm test`. **SIMULATED / authority NONE; no live model, network or physics experiment.**
