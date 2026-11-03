@@ -24,8 +24,8 @@ function exactKeys(value, expected, label) {
       Object.getPrototypeOf(value) !== Object.prototype) {
     throw new TypeError(label + ": expected plain object");
   }
-  const a = Object.keys(value).sort().join("|");
-  const b = [...expected].sort().join("|");
+  const a = JSON.stringify(Object.keys(value).sort());
+  const b = JSON.stringify([...expected].sort());
   if (a !== b) throw new TypeError(label + ": unknown or missing fields");
 }
 
@@ -78,8 +78,7 @@ export function buildCouncilEvidenceExchange(input) {
   // E0 refuses any extra prompt, real-observation or authority fields itself.
   const e0 = evaluateCouncilKeyholes(input.e0Input);
   if (e0.schema !== E0_SCHEMA || e0.origin !== "SIMULATED" ||
-      e0.authority !== "NONE" || e0.privacy === "PRIVATE") {
-    // E0 currently has no privacy property; guard uses raw input below.
+      e0.authority !== "NONE") {
     throw new TypeError("E0 contract mismatch");
   }
   if (input.e0Input.privacy !== "PUBLIC_SYNTHETIC") {
@@ -130,13 +129,28 @@ export function buildCouncilEvidenceExchange(input) {
   return { ...exchange, exchangeSha256: sha256(exchange) };
 }
 
+// Match against the known expected shape, rather than recursively serializing
+// arbitrary untrusted objects (including cycles, very deep trees, or prototypes).
+function exactReplay(expected, actual) {
+  if (Array.isArray(expected)) {
+    return Array.isArray(actual) && actual.length === expected.length &&
+      expected.every((value, index) => exactReplay(value, actual[index]));
+  }
+  if (expected !== null && typeof expected === "object") {
+    if (actual === null || typeof actual !== "object" || Array.isArray(actual) ||
+        Object.getPrototypeOf(actual) !== Object.prototype) return false;
+    const keys = Object.keys(expected).sort();
+    if (JSON.stringify(keys) !== JSON.stringify(Object.keys(actual).sort())) return false;
+    return keys.every(key => exactReplay(expected[key], actual[key]));
+  }
+  return Object.is(expected, actual);
+}
+
 // The review verifies exact deterministic replay, not GitHub source provenance,
 // signatures, participant existence, real inference, or correctness of claims.
 export function reviewCouncilEvidenceExchange(input, claimedExchange) {
   const expected = buildCouncilEvidenceExchange(input);
-  const integrityMatches = claimedExchange !== null &&
-    typeof claimedExchange === "object" &&
-    canonical(expected) === canonical(claimedExchange);
+  const integrityMatches = exactReplay(expected, claimedExchange);
   return {
     schema: COUNCIL_E1_SCHEMA,
     integrityMatches,
