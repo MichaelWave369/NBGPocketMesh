@@ -1,0 +1,68 @@
+name: Council E1-D pinned 3-consumer interoperability
+
+on:
+  pull_request:
+    paths:
+      - 'src/council-e0.mjs'
+      - 'src/council-e1.mjs'
+      - 'scripts/council-e1-golden.mjs'
+      - 'scripts/verify-council-consumers.mjs'
+      - 'tests/council-golden.test.mjs'
+      - 'tests/fixtures/council-e1-source-golden.json'
+      - '.github/workflows/council-interop-e1d.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'src/council-e0.mjs'
+      - 'src/council-e1.mjs'
+      - 'scripts/council-e1-golden.mjs'
+      - 'scripts/verify-council-consumers.mjs'
+      - 'tests/council-golden.test.mjs'
+      - 'tests/fixtures/council-e1-source-golden.json'
+      - '.github/workflows/council-interop-e1d.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  pinned-council-interop:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout E0/E1 producer
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Checkout merged ThinkTank E1-A consumer
+        uses: actions/checkout@v4
+        with:
+          repository: MichaelWave369/think-tank
+          ref: b0180823ba0c7ffe0842cb0c1999497226ba1d9d
+          path: .council-interop/thinktank
+          persist-credentials: false
+      - name: Checkout merged PocketBrain E1-B consumer
+        uses: actions/checkout@v4
+        with:
+          repository: MichaelWave369/PocketBrain
+          ref: 30c6a2b1acbddf20a0c968aba145f7c85c1a6632
+          path: .council-interop/pocketbrain
+          persist-credentials: false
+      - name: Checkout merged Vessie E1-C consumer
+        uses: actions/checkout@v4
+        with:
+          repository: MichaelWave369/SuperPhiVessel
+          ref: 8acc84e517a4acf217aba27fccf4232615fc33dd
+          path: .council-interop/vessie
+          persist-credentials: false
+      - name: Node 22 browser-compatible Web Crypto runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned PocketBrain TypeScript transpiler (scripts disabled)
+        run: npm ci --prefix .council-interop/pocketbrain --ignore-scripts --no-audit --no-fund
+      - name: Verify exact producer-generated public synthetic JSON
+        run: |
+          node scripts/council-e1-golden.mjs --verify
+          node --test tests/council-golden.test.mjs
+      - name: Verify actual three independent consumer implementations
+        run: node --test scripts/verify-council-consumers.mjs
