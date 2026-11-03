@@ -163,3 +163,7 @@ No prior experiment, model checkpoint or adjoining repository is changed.
 ## NBG-FLEET-OBS-01 E0 · Five-project Research Council (synthetic)
 
 The [frozen Research Council Keyhole protocol](docs/FLEET_COUNCIL_E0.md) adds a deterministic, test-covered comparison where equal aggregate performance conceals different subgroup outcomes. Proposed ThinkTank, PocketBrain, Vessie, BrainC, and GAIA roles are kept separate from actual integration, execution authority, and scientific evidence. Run `node --test tests/council-e0.test.mjs` or `npm test`. **SIMULATED / authority NONE; no live model, network or physics experiment.**
+
+## NBG-FLEET-OBS-01 E1 · Typed Research Council Evidence Exchange
+
+The [E1 contract](docs/FLEET_COUNCIL_E1.md) adds an offline, deterministic, test-double evidence envelope for proposed ThinkTank, PocketBrain and Vessie roles, all bound to the exact synthetic E0 parent digest and operator-declared source revisions. It includes adversarial negative tests for forged authority, malformed participant identity, input drift, private payloads and misleading source tiers. Run `node --test tests/council-e1.test.mjs` or `npm test`. **No live cross-repo communication, authenticated provenance, inference, sharing or execution is implemented.**
