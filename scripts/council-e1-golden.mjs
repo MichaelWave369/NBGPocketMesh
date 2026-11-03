@@ -1,5 +1,6 @@
 import { readFileSync, writeFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
+import { resolve } from "node:path";
 import { evaluateCouncilKeyholes, SCHEMA as E0_SCHEMA } from "../src/council-e0.mjs";
 import { buildCouncilEvidenceExchange, reviewCouncilEvidenceExchange } from "../src/council-e1.mjs";
 
@@ -74,8 +75,7 @@ export function goldenJson() {
 }
 
 // No user-controlled paths. Generation requires a deliberate explicit command.
-if (process.argv[1] && fileURLToPath(import.meta.url) ===
-    fileURLToPath(new URL("file://" + process.argv[1]))) {
+if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
   const flag = process.argv[2];
   if (process.argv.length !== 3 || !["--verify", "--write", "--stdout"].includes(flag)) {
     console.error("Use --verify, --write or --stdout (fixed public-synthetic fixture only)");
