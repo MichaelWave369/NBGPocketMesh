@@ -167,3 +167,7 @@ The [frozen Research Council Keyhole protocol](docs/FLEET_COUNCIL_E0.md) adds a 
 ## NBG-FLEET-OBS-01 E1 · Typed Research Council Evidence Exchange
 
 The [E1 contract](docs/FLEET_COUNCIL_E1.md) adds an offline, deterministic, test-double evidence envelope for proposed ThinkTank, PocketBrain and Vessie roles, all bound to the exact synthetic E0 parent digest and operator-declared source revisions. It includes adversarial negative tests for forged authority, malformed participant identity, input drift, private payloads and misleading source tiers. Run `node --test tests/council-e1.test.mjs` or `npm test`. **No live cross-repo communication, authenticated provenance, inference, sharing or execution is implemented.**
+
+## Research Council E1-D · Pinned three-consumer interoperability
+
+The [source-generated, public-synthetic golden receipt](tests/fixtures/council-e1-source-golden.json) and [interop protocol](docs/FLEET_COUNCIL_E1D.md) test one **actual NBGPocketMesh E0/E1 output** against pinned, merged versions of ThinkTank, PocketBrain and Vessie's independent receipt consumers. The dedicated CI runs accepted, null and adversarial cases against the real consumer modules; no live network, models, private memory or authority grants are involved. Source revision strings are declared rather than authenticated. For exact producer replay, run `node scripts/council-e1-golden.mjs --verify`; the three-consumer test runs only in the separately provisioned pinned checkout workflow.
