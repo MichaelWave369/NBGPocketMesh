@@ -218,3 +218,14 @@ npm run demo:signed
 ```
 
 The demonstration generates a temporary signing key in memory, signs one approved local score, performs it once, and refuses an identical replay. **Not a sandbox or production identity system:** the public trust root and ledger are configured by the trusted host; the private key must remain with the independent signer. Existing unsigned research APIs remain available separately. No live PhiOS, real network device, cloud service, or model inference is involved.
+
+## Pocket Executor Process Boundary v1 · Permit-only subprocess
+
+[Read the isolated executor process protocol](docs/POCKET_EXECUTOR_PROCESS_V1.md). An **additive one-shot local worker** accepts exactly one signed permit via stdin, reads a protected **public-key-only** operator config and persistent replay ledger outside the request, checks a fixed profile allowlist, then dispatches to the existing signed E0 → Living Library → Keyhole stack. No old unsigned routing interface is exposed over the worker's request channel.
+
+```sh
+npm test
+npm run demo:executor
+```
+
+The demo signs one synthetic network-health execution **in a separate parent process** and verifies that a second child refuses the replay. Cross-process tests cover spoofed trust roots, unsigned flags, changed signatures, shared-ledger races, expired permits, untrusted profiles, misconfigured files and oversized inputs. **Not** a sandbox, production service, real PhiID authentication, live hardware integration, or measured performance improvement. Trusted local modules still run with ordinary Node privileges.

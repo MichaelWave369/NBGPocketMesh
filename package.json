@@ -15,7 +15,8 @@
     "demo:album": "node scripts/pocket-album-demo.mjs",
     "demo:library": "node scripts/pocket-library-demo.mjs",
     "demo:bridge": "node scripts/pocket-e0-bridge-demo.mjs",
-    "demo:signed": "node scripts/pocket-signed-gate-demo.mjs"
+    "demo:signed": "node scripts/pocket-signed-gate-demo.mjs",
+    "demo:executor": "node scripts/pocket-executor-process-demo.mjs"
   },
   "engines": {
     "node": ">=20"
