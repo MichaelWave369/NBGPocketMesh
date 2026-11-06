@@ -229,3 +229,14 @@ npm run demo:executor
 ```
 
 The demo signs one synthetic network-health execution **in a separate parent process** and verifies that a second child refuses the replay. Cross-process tests cover spoofed trust roots, unsigned flags, changed signatures, shared-ledger races, expired permits, untrusted profiles, misconfigured files and oversized inputs. **Not** a sandbox, production service, real PhiID authentication, live hardware integration, or measured performance improvement. Trusted local modules still run with ordinary Node privileges.
+
+## PhiID-compatible approval handshake v0 (synthetic, two signatures)
+
+[Protocol and security limitations](docs/POCKET_PHIID_APPROVAL_V0.md). A **new optional one-shot local worker** requires both the existing signed Pocket Album execution permit **and** an independent Ed25519 approval statement. The approval is scoped to the entire permit hash and declares an OIDC-shaped `iss`/`sub` pair, purpose, scope, short validity, and a revocable approval ID. Protected operator policy lists approved **synthetic** principals and trusted public approver keys. It rejects PhiID R2 consent receipts, which deliberately grant no execution authority.
+
+```sh
+npm test
+npm run demo:phiid
+```
+
+**Not a real PhiID login or authentication bridge.** Signers in this offline demonstration declare synthetic identities without validating OIDC tokens. The original permit-only worker and older research APIs remain available separately, so this is not an enforced production boundary. Real integration requires authenticated OIDC verification, human-reviewed approval UX, persistent revocation and isolated deployment.
