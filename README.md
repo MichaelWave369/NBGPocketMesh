@@ -171,3 +171,17 @@ The [E1 contract](docs/FLEET_COUNCIL_E1.md) adds an offline, deterministic, test
 ## Research Council E1-D · Pinned three-consumer interoperability
 
 The [source-generated, public-synthetic golden receipt](tests/fixtures/council-e1-source-golden.json) and [interop protocol](docs/FLEET_COUNCIL_E1D.md) test one **actual NBGPocketMesh E0/E1 output** against pinned, merged versions of ThinkTank, PocketBrain and Vessie's independent receipt consumers. The dedicated CI runs accepted, null and adversarial cases against the real consumer modules; no live network, models, private memory or authority grants are involved. Source revision strings are declared rather than authenticated. For exact producer replay, run `node scripts/council-e1-golden.mjs --verify`; the three-consumer test runs only in the separately provisioned pinned checkout workflow.
+
+
+## Pocket Album Protocol v0 · portable capability compositions
+
+**New isolated Node.js pilot:** [Pocket Album v0 protocol](docs/POCKET_ALBUM_V0.md). A pocket points to a SHA-256 content-addressed manifest describing an original **Observe → Diagnose → Report** score. Three locally allowlisted modules run as typed stages, with interface checks, a permission Keyhole, deterministic receipt hashing, and source-file drift detection. No raw observations enter receipts.
+
+```sh
+npm test
+npm run demo:album
+```
+
+The demo compares **selective imports** against an **eager baseline** at each target, showing module-request counts, declared synthetic working-set estimates and output digest equivalence. Alternate `report-v2` code preserves the declared report output for frozen fixtures while source/album digests change. A broken report, tampered manifests, incompatible types, closed policy, and insufficient budget fail closed. One-shot timings are *not* performance evidence; no live network, LLM, dynamic untrusted code, measured memory savings or production integrations are claimed. See [tests](tests/pocket-album.test.mjs).
+
+**Metaphor:** score = workflow, track = local capability, gear = typed transform, Keyhole = permission and compatibility, pocket = logical content-addressed album. A "melody" is the measured output or invariant, **not** a claim of subjective continuity.
