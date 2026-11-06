@@ -187,7 +187,7 @@ test('ledger nonce is consumed even when the post-signature environment changes'
 });
 test('unsigned legacy E0 flag is not an acceptable gate permit',async()=>{
   await withLedger(async ledgerDir=>{
-    const fake={operator-approved:true,boundaryOpen:true};
+    const fake={operatorApproved:true,boundaryOpen:true};
     await assert.rejects(()=>executeSignedPermit({...ctx(),ledgerDir,permit:fake}),/unexpected/);
     assert.equal(readdirSync(ledgerDir).length,0);
   });
