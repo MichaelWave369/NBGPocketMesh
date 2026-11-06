@@ -207,3 +207,14 @@ This is not an infinite physical grid, real dynamic plugin loader, sandbox, auth
 [Read the E0 / Living Library bridge protocol](docs/POCKET_E0_BRIDGE.md). The unchanged E0 router now has a **separate, explicit, local-only bridge** to approved Living Library albums. It plans a synthetic capability route, rechecks its receipt, independently matches the exact approved local manifest, requires an explicit operator flag and an open Keyhole, then invokes the existing v1/v0 typed album runner. **An E0 ROUTE is never itself execution permission.**
 
 Run `npm test` and `npm run demo:bridge`. Tests cover fake/altered manifest routing, revocation, remote/private refusal, separate memory policy checks, deterministic receipt replay, and no operator approval. This is local-fixture software, not authenticated production permissions, real network diagnostics, untrusted-code sandboxing, PhiOS integration, or measured performance.
+
+## Pocket Signed Execution Gate v1 · offline one-use permits
+
+[Protocol, refusal controls and trust limitations](docs/POCKET_SIGNED_GATE_V1.md). The local E0 → Living Library execution stack now has a **new, signed entrypoint** that accepts Ed25519 permits bound to an exact route, album revision, task, fixture digest, execution mode, and short expiration. A user-supplied manifest or plain `operatorApproved` flag cannot satisfy this entrypoint. A private operator-owned nonce directory tracks consumed permits using atomic create-only files, and a failed post-signature validation still burns its nonce.
+
+```sh
+npm test
+npm run demo:signed
+```
+
+The demonstration generates a temporary signing key in memory, signs one approved local score, performs it once, and refuses an identical replay. **Not a sandbox or production identity system:** the public trust root and ledger are configured by the trusted host; the private key must remain with the independent signer. Existing unsigned research APIs remain available separately. No live PhiOS, real network device, cloud service, or model inference is involved.
