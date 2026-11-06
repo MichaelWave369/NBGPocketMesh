@@ -21,6 +21,7 @@ jobs:
       - run: npm run demo:library
       - run: npm run demo:bridge
       - run: npm run demo:signed
+      - run: npm run demo:executor
       - run: python -m py_compile scripts/e1b_lab.py scripts/e1b_dataset.py scripts/e1c_audit.py
       - run: python -m unittest discover -s tests_py -v
 
