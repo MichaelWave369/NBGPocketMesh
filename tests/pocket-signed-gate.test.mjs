@@ -15,7 +15,7 @@ import {
 const library=createDemoLibrary();
 const signer=generateKeyPairSync('ed25519');
 const other=generateKeyPairSync('ed25519');
-const trustedKeys={operatorA:signer.publicKey};
+const trustedKeys={operator-a:signer.publicKey};
 const fixedInput=NETWORK_FIXTURE;
 const now=Date.now();
 const ctx=(extra={})=>({library,trustedKeys,profile:'health',mode:'selective',input:fixedInput,...extra});
@@ -27,7 +27,7 @@ const issue=async(extra={})=>{
     issuedAtMs:extra.issuedAtMs??now,
     expiresAtMs:extra.expiresAtMs??now+60000
   });
-  return signExecutionRequest(request,{privateKey:signer.privateKey,keyId:'operatorA'});
+  return signExecutionRequest(request,{privateKey:signer.privateKey,keyId:'operator-a'});
 };
 const temp=()=>mkdtempSync(join(tmpdir(),'pocket-signed-v1-'));
 async function withLedger(action) {
@@ -44,7 +44,7 @@ test('preparation proves an approved E0 HOLD without executing tracks',async()=>
   assert.match(request.e0ReceiptSha256,/^[a-f0-9]{64}$/);
   assert.match(request.inputSha256,/^[a-f0-9]{64}$/);
   assert.ok(!('output' in request));
-  assert.ok(!('operatorApproved' in request));
+  assert.ok(!('operator-approved' in request));
 });
 test('no signed permit means no execution',async()=>{
   await withLedger(async ledgerDir=>{
@@ -102,7 +102,7 @@ test('signer must exist in operator-pinned trust roots',async()=>{
   await withLedger(async ledgerDir=>{
     const permit=await issue();
     await assert.rejects(()=>executeSignedPermit({...ctx({trustedKeys:{}}),ledgerDir,permit,nowMs:now}),/Untrusted signer/);
-    await assert.rejects(()=>executeSignedPermit({...ctx({trustedKeys:{operatorA:other.publicKey}}),ledgerDir,permit,nowMs:now}),/signature/);
+    await assert.rejects(()=>executeSignedPermit({...ctx({trustedKeys:{operator-a:other.publicKey}}),ledgerDir,permit,nowMs:now}),/signature/);
     assert.equal(readdirSync(ledgerDir).length,0);
   });
 });
@@ -169,7 +169,7 @@ test('E0 planned forged manifest refuses before permit can be issued',async()=>{
 test('signer cannot generate an approval with invalid key ID',async()=>{
   const request=await prepareExecutionRequest({library,issuedAtMs:now});
   assert.throws(()=>signExecutionRequest(request,{privateKey:signer.privateKey,keyId:'bad id'}),/key ID/);
-  assert.throws(()=>signExecutionRequest(request,{keyId:'operatorA'}),/Private signing key/);
+  assert.throws(()=>signExecutionRequest(request,{keyId:'operator-a'}),/Private signing key/);
 });
 test('missing replay ledger refuses without executing',async()=>{
   const permit=await issue();
@@ -186,7 +186,7 @@ test('ledger nonce is consumed even when the post-signature environment changes'
 });
 test('unsigned legacy E0 flag is not an acceptable gate permit',async()=>{
   await withLedger(async ledgerDir=>{
-    const fake={operatorApproved:true,boundaryOpen:true};
+    const fake={operator-approved:true,boundaryOpen:true};
     await assert.rejects(()=>executeSignedPermit({...ctx(),ledgerDir,permit:fake,nowMs:now}),/unexpected/);
     assert.equal(readdirSync(ledgerDir).length,0);
   });
