@@ -102,7 +102,8 @@ export function signExecutionRequest(request,{privateKey,keyId}={}){
   validateRequest(request);
   if(!token(keyId))throw new TypeError('Invalid key ID');
   if(!privateKey)throw new TypeError('Private signing key required');
-  const key=createPrivateKey(privateKey);
+  const key=privateKey?.type==='private'&&privateKey?.asymmetricKeyType==='ed25519'
+    ?privateKey:createPrivateKey(privateKey);
   if(key.asymmetricKeyType!=='ed25519')throw new TypeError('Only Ed25519 is supported');
   const signature=signRaw(null,Buffer.from(messageOf(request,keyId)),key).toString('base64url');
   return {schema:SIGNED_PERMIT_SCHEMA,algorithm:'Ed25519',keyId,request:structuredClone(request),signature};
@@ -126,7 +127,9 @@ function validateRequest(request){
 function trustedKey(permit,trustedKeys){
   if(!isPlain(trustedKeys)||!Object.hasOwn(trustedKeys,permit.keyId))
     throw new TypeError('Untrusted signer');
-  const key=createPublicKey(trustedKeys[permit.keyId]);
+  const supplied=trustedKeys[permit.keyId];
+  const key=supplied?.type==='public'&&supplied?.asymmetricKeyType==='ed25519'
+    ?supplied:createPublicKey(supplied);
   if(key.asymmetricKeyType!=='ed25519')throw new TypeError('Trust root is not Ed25519');
   return key;
 }
@@ -176,9 +179,11 @@ function consumeNonce(nonce,ledgerDir,requestHash){
  */
 export async function executeSignedPermit({
   permit,trustedKeys,ledgerDir,library,profile='health',task,manifests,
-  input=NETWORK_FIXTURE,mode='selective',nowMs=Date.now()
+  input=NETWORK_FIXTURE,mode='selective'
 }={}){
-  const signerFingerprintSha256=verifyPermit(permit,trustedKeys,nowMs);
+  // The executor takes time from its own clock; callers cannot override
+  // expiry validation with a forged nowMs parameter.
+  const signerFingerprintSha256=verifyPermit(permit,trustedKeys,Date.now());
   const request=permit.request;
   // Spend the nonce BEFORE the first await so concurrent callers cannot win
   // twice. Any later route, policy or module failure still burns the permit.
