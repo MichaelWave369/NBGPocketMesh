@@ -166,7 +166,7 @@ test('explicit local snapshot file is create-only and reloadable',()=>{
     assert.deepEqual(loadPocketLibrary(file),library);
     assert.throws(()=>savePocketLibrary(file,library),e=>e.code==='EEXIST');
     const bytes=readFileSync(file,'utf8');
-    writeFileSync(file,bytes.replace('network-health','forged-health'));
+    writeFileSync(file,bytes.replace('Network Health Album','Forged Health Album'));
     assert.throws(()=>loadPocketLibrary(file),/mismatch/);
   } finally {rmSync(folder,{recursive:true,force:true});}
 });
