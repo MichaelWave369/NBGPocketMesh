@@ -8,6 +8,7 @@ import {mkdtempSync,mkdirSync,writeFileSync,rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {spawn} from 'node:child_process';
+import {fileURLToPath} from 'node:url';
 import {createDemoLibrary} from '../src/pocket-library.mjs';
 import {prepareExecutionRequest,signExecutionRequest} from '../src/pocket-signed-gate.mjs';
 import {CONFIG_SCHEMA,REQUEST_SCHEMA} from '../src/pocket-executor-protocol.mjs';
@@ -26,7 +27,7 @@ writeFileSync(configFile,JSON.stringify({
 function invoke(envelope){
   return new Promise((resolve,reject)=>{
     const child=spawn(process.execPath,
-      [new URL('./pocket-executor-worker.mjs',import.meta.url).pathname,configFile],
+      [fileURLToPath(new URL('./pocket-executor-worker.mjs',import.meta.url)),configFile],
       {stdio:['pipe','pipe','pipe'],env:{...process.env,NODE_OPTIONS:''}});
     let stdout='',stderr='';
     child.stdout.on('data',b=>stdout+=b);
