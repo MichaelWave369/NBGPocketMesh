@@ -51,13 +51,18 @@ const integer=(v,min,max)=>Number.isSafeInteger(v)&&v>=min&&v<=max;
 const principalAllowed=(subject,list)=>list.some(p=>p.iss===subject.iss&&p.sub===subject.sub);
 function validateSubject(subject){
   exact(subject,['iss','sub'],'OIDC-shaped subject');
-  const secureIssuer=typeof subject.iss==='string'&&
-    /^https:\/\/[a-z0-9][a-z0-9.-]+(?::[0-9]+)?(?:\/[a-zA-Z0-9._~!  if(typeof subject.iss!=='string'||subject.iss.length>256||
-     !/^https:\/\/[a-z0-9][a-z0-9.-]+(?::[0-9]+)?(?:\/[a-zA-Z0-9._~!$&'()*+,;=:@%-]*)*$/.test(subject.iss)||
-'()*+,;=:@%-]*)*$/.test(subject.iss);
-  const exactLocalDevIssuer=subject.iss===PHIID_LOOPBACK_DEV_ISSUER;
-  if(typeof subject.iss!=='string'||subject.iss.length>256||
-     !(secureIssuer||exactLocalDevIssuer)||
+  if(typeof subject.iss!=='string'||subject.iss.length>256)
+    throw new TypeError('Invalid declared issuer/subject shape');
+  // A strict HTTPS URL is accepted, or PhiID's SINGLE exact localhost
+  // Keycloak development issuer. All other cleartext issuers are rejected.
+  let secureIssuer=false;
+  try {
+    const url=new URL(subject.iss);
+    secureIssuer=url.protocol==='https:'&&url.username===''&&url.password===''&&
+      url.search===''&&url.hash===''&&url.href===subject.iss&&
+      /^[a-z0-9][a-z0-9.-]*$/.test(url.hostname);
+  } catch { /* invalid URL, not an acceptable secure issuer */ }
+  if(!(secureIssuer||subject.iss===PHIID_LOOPBACK_DEV_ISSUER)||
      typeof subject.sub!=='string'||subject.sub.length<1||subject.sub.length>128||
      /[\x00-\x1f\x7f]/.test(subject.sub))
     throw new TypeError('Invalid declared issuer/subject shape');
