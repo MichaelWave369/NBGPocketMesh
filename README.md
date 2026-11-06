@@ -185,3 +185,19 @@ npm run demo:album
 The demo compares **selective imports** against an **eager baseline** at each target, showing module-request counts, declared synthetic working-set estimates and output digest equivalence. Alternate `report-v2` code preserves the declared report output for frozen fixtures while source/album digests change. A broken report, tampered manifests, incompatible types, closed policy, and insufficient budget fail closed. One-shot timings are *not* performance evidence; no live network, LLM, dynamic untrusted code, measured memory savings or production integrations are claimed. See [tests](tests/pocket-album.test.mjs).
 
 **Metaphor:** score = workflow, track = local capability, gear = typed transform, Keyhole = permission and compatibility, pocket = logical content-addressed album. A "melody" is the measured output or invariant, **not** a claim of subjective continuity.
+
+
+## Pocket Album v1 · The Living Library (offline research)
+
+[Read the v1 Living Library protocol](docs/POCKET_LIBRARY_V1.md).
+
+The local Pocket Album v0 runner now has an **additive, content-addressed catalog**. It supports bounded four-way pocket addresses, multiple album families, append-only revisions, hashed shared track references, exact/tag/subtree search, verified score resolution, and optional JSON snapshots. A different allowlisted Report implementation can preserve the tested output while its source and album digests record the change. The approved v0 modules are still the **only** executable tracks.
+
+\`\`\`sh
+npm test
+npm run demo:library
+npm run demo:library -- --save my-library.json
+npm run demo:library -- --load my-library.json
+\`\`\`
+
+This is not an infinite physical grid, real dynamic plugin loader, sandbox, authentication, live PhiOS/PhiStream/PocketBrain connection, or demonstrated memory/latency speedup. [Browse the implementation](src/pocket-library.mjs) and [negative-control tests](tests/pocket-library.test.mjs).
