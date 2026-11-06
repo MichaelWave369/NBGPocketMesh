@@ -13,7 +13,8 @@
     "demo:e2k": "node scripts/e2k-demo.mjs",
     "demo:e2kb": "node scripts/e2kb-demo.mjs",
     "demo:album": "node scripts/pocket-album-demo.mjs",
-    "demo:library": "node scripts/pocket-library-demo.mjs"
+    "demo:library": "node scripts/pocket-library-demo.mjs",
+    "demo:bridge": "node scripts/pocket-e0-bridge-demo.mjs"
   },
   "engines": {
     "node": ">=20"

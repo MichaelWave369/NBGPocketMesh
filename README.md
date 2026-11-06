@@ -201,3 +201,9 @@ npm run demo:library -- --load my-library.json
 ```
 
 This is not an infinite physical grid, real dynamic plugin loader, sandbox, authentication, live PhiOS/PhiStream/PocketBrain connection, or demonstrated memory/latency speedup. [Browse the implementation](src/pocket-library.mjs) and [negative-control tests](tests/pocket-library.test.mjs).
+
+## E0 → Pocket Album verified local handoff (experimental)
+
+[Read the E0 / Living Library bridge protocol](docs/POCKET_E0_BRIDGE.md). The unchanged E0 router now has a **separate, explicit, local-only bridge** to approved Living Library albums. It plans a synthetic capability route, rechecks its receipt, independently matches the exact approved local manifest, requires an explicit operator flag and an open Keyhole, then invokes the existing v1/v0 typed album runner. **An E0 ROUTE is never itself execution permission.**
+
+Run `npm test` and `npm run demo:bridge`. Tests cover fake/altered manifest routing, revocation, remote/private refusal, separate memory policy checks, deterministic receipt replay, and no operator approval. This is local-fixture software, not authenticated production permissions, real network diagnostics, untrusted-code sandboxing, PhiOS integration, or measured performance.
