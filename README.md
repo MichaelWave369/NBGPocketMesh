@@ -240,3 +240,8 @@ npm run demo:phiid
 ```
 
 **Not a real PhiID login or authentication bridge.** Signers in this offline demonstration declare synthetic identities without validating OIDC tokens. The original permit-only worker and older research APIs remain available separately, so this is not an enforced production boundary. Real integration requires authenticated OIDC verification, human-reviewed approval UX, persistent revocation and isolated deployment.
+
+
+### PhiID localhost issuer compatibility (development only)
+
+[See the strict dev-issuer compatibility contract](docs/PHIID_LOOPBACK_ISSUER_COMPAT.md). The existing Ed25519 approval verifier now recognizes only PhiID's exact `http://127.0.0.1:8080/realms/phiid-dev` test issuer in addition to normal HTTPS issuers. The operator must still explicitly allow the exact `(iss, sub)` pair and pin two independent signing keys. All other HTTP issuers fail closed; this is **not** live OIDC verification or production authorization.
