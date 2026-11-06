@@ -15,7 +15,7 @@ import {
 const library=createDemoLibrary();
 const signer=generateKeyPairSync('ed25519');
 const other=generateKeyPairSync('ed25519');
-const trustedKeys={operator-a:signer.publicKey};
+const trustedKeys={'operator-a':signer.publicKey};
 const fixedInput=NETWORK_FIXTURE;
 const now=Date.now();
 const ctx=(extra={})=>({library,trustedKeys,profile:'health',mode:'selective',input:fixedInput,...extra});
@@ -44,7 +44,7 @@ test('preparation proves an approved E0 HOLD without executing tracks',async()=>
   assert.match(request.e0ReceiptSha256,/^[a-f0-9]{64}$/);
   assert.match(request.inputSha256,/^[a-f0-9]{64}$/);
   assert.ok(!('output' in request));
-  assert.ok(!('operator-approved' in request));
+  assert.ok(!('operatorApproved' in request));
 });
 test('no signed permit means no execution',async()=>{
   await withLedger(async ledgerDir=>{
@@ -55,7 +55,7 @@ test('no signed permit means no execution',async()=>{
 test('signed one-shot intent executes reviewed track and returns hash-only evidence',async()=>{
   await withLedger(async ledgerDir=>{
     const permit=await issue();
-    const run=await executeSignedPermit({...ctx(),ledgerDir,permit,nowMs:now});
+    const run=await executeSignedPermit({...ctx(),ledgerDir,permit});
     assert.equal(run.output.severity,'critical');
     assert.equal(run.receipt.decision,'PERFORM');
     assert.match(run.receipt.signerFingerprintSha256,/^[a-f0-9]{64}$/);
@@ -67,7 +67,7 @@ test('signed one-shot intent executes reviewed track and returns hash-only evide
 test('permit cannot be reused even if first execution succeeded',async()=>{
   await withLedger(async ledgerDir=>{
     const permit=await issue();
-    const args={...ctx(),ledgerDir,permit,nowMs:now};
+    const args={...ctx(),ledgerDir,permit};
     await executeSignedPermit(args);
     await assert.rejects(()=>executeSignedPermit(args),/nonce already spent/);
   });
@@ -75,7 +75,7 @@ test('permit cannot be reused even if first execution succeeded',async()=>{
 test('concurrent attempts with same permit admit exactly one winner',async()=>{
   await withLedger(async ledgerDir=>{
     const permit=await issue();
-    const args={...ctx(),ledgerDir,permit,nowMs:now};
+    const args={...ctx(),ledgerDir,permit};
     const results=await Promise.allSettled([executeSignedPermit(args),executeSignedPermit(args)]);
     assert.equal(results.filter(x=>x.status==='fulfilled').length,1);
     assert.equal(results.filter(x=>x.status==='rejected').length,1);
@@ -86,7 +86,7 @@ test('permit is rejected if signature was changed',async()=>{
   await withLedger(async ledgerDir=>{
     const permit=await issue();
     const tampered={...permit,signature:'A'.repeat(86)};
-    await assert.rejects(()=>executeSignedPermit({...ctx(),ledgerDir,permit:tampered,nowMs:now}),/signature/);
+    await assert.rejects(()=>executeSignedPermit({...ctx(),ledgerDir,permit:tampered}),/signature/);
     assert.equal(readdirSync(ledgerDir).length,0);
   });
 });
@@ -94,32 +94,33 @@ test('changing signed scope cannot authorize a different profile',async()=>{
   await withLedger(async ledgerDir=>{
     const permit=await issue();
     const tampered={...permit,request:{...permit.request,profile:'observe'}};
-    await assert.rejects(()=>executeSignedPermit({...ctx({profile:'observe'}),ledgerDir,permit:tampered,nowMs:now}),/signature/);
+    await assert.rejects(()=>executeSignedPermit({...ctx({profile:'observe'}),ledgerDir,permit:tampered}),/signature/);
     assert.equal(readdirSync(ledgerDir).length,0);
   });
 });
 test('signer must exist in operator-pinned trust roots',async()=>{
   await withLedger(async ledgerDir=>{
     const permit=await issue();
-    await assert.rejects(()=>executeSignedPermit({...ctx({trustedKeys:{}}),ledgerDir,permit,nowMs:now}),/Untrusted signer/);
-    await assert.rejects(()=>executeSignedPermit({...ctx({trustedKeys:{operator-a:other.publicKey}}),ledgerDir,permit,nowMs:now}),/signature/);
+    await assert.rejects(()=>executeSignedPermit({...ctx({trustedKeys:{}}),ledgerDir,permit}),/Untrusted signer/);
+    await assert.rejects(()=>executeSignedPermit({...ctx({trustedKeys:{'operator-a':other.publicKey}}),ledgerDir,permit}),/signature/);
     assert.equal(readdirSync(ledgerDir).length,0);
   });
 });
 test('reject algorithm swap, unknown fields and weak keys',async()=>{
   await withLedger(async ledgerDir=>{
     const permit=await issue();
-    await assert.rejects(()=>executeSignedPermit({...ctx(),ledgerDir,permit:{...permit,algorithm:'none'},nowMs:now}),/envelope/);
-    await assert.rejects(()=>executeSignedPermit({...ctx(),ledgerDir,permit:{...permit,code:'require("fs")'},nowMs:now}),/unexpected/);
-    await assert.rejects(()=>executeSignedPermit({...ctx(),ledgerDir,permit:{...permit,request:{...permit.request,extra:'bad'}},nowMs:now}),/unexpected/);
+    await assert.rejects(()=>executeSignedPermit({...ctx(),ledgerDir,permit:{...permit,algorithm:'none'}}),/envelope/);
+    await assert.rejects(()=>executeSignedPermit({...ctx(),ledgerDir,permit:{...permit,code:'require("fs")'}}),/unexpected/);
+    await assert.rejects(()=>executeSignedPermit({...ctx(),ledgerDir,permit:{...permit,request:{...permit.request,extra:'bad'}}}),/unexpected/);
     assert.equal(readdirSync(ledgerDir).length,0);
   });
 });
-test('expired permit and not-yet-valid permit both fail before replay consumption',async()=>{
+test('expired and future permits fail using executor clock, not caller time',async()=>{
   await withLedger(async ledgerDir=>{
-    const permit=await issue({issuedAtMs:now,expiresAtMs:now+1000});
-    await assert.rejects(()=>executeSignedPermit({...ctx(),ledgerDir,permit,nowMs:now+1000}),/expired/);
-    await assert.rejects(()=>executeSignedPermit({...ctx(),ledgerDir,permit,nowMs:now-1}),/valid/);
+    const expired=await issue({issuedAtMs:now-30000,expiresAtMs:now-20000});
+    await assert.rejects(()=>executeSignedPermit({...ctx(),ledgerDir,permit:expired,nowMs:now-25000}),/expired/);
+    const future=await issue({issuedAtMs:now+30000,expiresAtMs:now+60000});
+    await assert.rejects(()=>executeSignedPermit({...ctx(),ledgerDir,permit:future,nowMs:now+35000}),/valid/);
     assert.equal(readdirSync(ledgerDir).length,0);
   });
 });
@@ -133,20 +134,20 @@ test('same signed permit cannot execute altered input',async()=>{
     const permit=await issue();
     await assert.rejects(()=>executeSignedPermit({...ctx({
       input:{...fixedInput,asset:'different-switch'}
-    }),ledgerDir,permit,nowMs:now}),/Signed intent/);
+    }),ledgerDir,permit}),/Signed intent/);
     assert.equal(readdirSync(ledgerDir).length,1);
   });
 });
 test('same signed permit cannot execute altered mode or approved budget',async()=>{
   await withLedger(async ledgerDir=>{
     const permit=await issue();
-    await assert.rejects(()=>executeSignedPermit({...ctx({mode:'eager'}),ledgerDir,permit,nowMs:now}),/Signed intent/);
+    await assert.rejects(()=>executeSignedPermit({...ctx({mode:'eager'}),ledgerDir,permit}),/Signed intent/);
   });
   await withLedger(async ledgerDir=>{
     const permit=await issue();
     await assert.rejects(()=>executeSignedPermit({...ctx({
       task:createBridgeTask('health',{memoryBudgetMiB:20})
-    }),ledgerDir,permit,nowMs:now}),/Signed intent/);
+    }),ledgerDir,permit}),/Signed intent/);
   });
 });
 test('changed library revision cannot consume approval to execute',async()=>{
@@ -155,7 +156,7 @@ test('changed library revision cannot consume approval to execute',async()=>{
     // A different valid library identity creates a new album/latest revision map.
     const modified=createDemoLibrary();
     const altered={...modified,librarySha256:'f'.repeat(64)};
-    await assert.rejects(()=>executeSignedPermit({...ctx({library:altered}),ledgerDir,permit,nowMs:now}));
+    await assert.rejects(()=>executeSignedPermit({...ctx({library:altered}),ledgerDir,permit}));
     assert.equal(readdirSync(ledgerDir).length,1);
   });
 });
@@ -173,21 +174,21 @@ test('signer cannot generate an approval with invalid key ID',async()=>{
 });
 test('missing replay ledger refuses without executing',async()=>{
   const permit=await issue();
-  await assert.rejects(()=>executeSignedPermit({...ctx(),permit,nowMs:now}),/Replay ledger required/);
-  await assert.rejects(()=>executeSignedPermit({...ctx(),permit,ledgerDir:'/path/does/not/exist/never',nowMs:now}),/directory missing/);
+  await assert.rejects(()=>executeSignedPermit({...ctx(),permit}),/Replay ledger required/);
+  await assert.rejects(()=>executeSignedPermit({...ctx(),permit,ledgerDir:'/path/does/not/exist/never'}),/directory missing/);
 });
 test('ledger nonce is consumed even when the post-signature environment changes',async()=>{
   await withLedger(async ledgerDir=>{
     const permit=await issue();
     const changed={...fixedInput,asset:'new-host'};
-    await assert.rejects(()=>executeSignedPermit({...ctx({input:changed}),ledgerDir,permit,nowMs:now}),/Signed intent/);
-    await assert.rejects(()=>executeSignedPermit({...ctx(),ledgerDir,permit,nowMs:now}),/nonce already spent/);
+    await assert.rejects(()=>executeSignedPermit({...ctx({input:changed}),ledgerDir,permit}),/Signed intent/);
+    await assert.rejects(()=>executeSignedPermit({...ctx(),ledgerDir,permit}),/nonce already spent/);
   });
 });
 test('unsigned legacy E0 flag is not an acceptable gate permit',async()=>{
   await withLedger(async ledgerDir=>{
     const fake={operator-approved:true,boundaryOpen:true};
-    await assert.rejects(()=>executeSignedPermit({...ctx(),ledgerDir,permit:fake,nowMs:now}),/unexpected/);
+    await assert.rejects(()=>executeSignedPermit({...ctx(),ledgerDir,permit:fake}),/unexpected/);
     assert.equal(readdirSync(ledgerDir).length,0);
   });
 });
