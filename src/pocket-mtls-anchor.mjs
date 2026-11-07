@@ -21,6 +21,8 @@ import {checkServerIdentity} from 'node:tls';
 import {request as httpsRequest,createServer as createHttpsServer} from 'node:https';
 import {createReadOnlyAnchorHandler,verifyExternalAnchorProof} from './pocket-external-anchor.mjs';
 import {assertSignedTrustCheckpoint} from './pocket-signed-checkpoint.mjs';
+import {requireAllowedAnchorClient,loadAnchorClientAccessPolicy as loadRequiredClientPolicy} from './pocket-anchor-client-access.mjs';
+import {acceptAnchorContinuity} from './pocket-anchor-continuity.mjs';
 
 export const TLS_ANCHOR_CLIENT_SCHEMA='NBGPocketMesh.TlsAnchorClient.v1';
 const KEY=/^[a-z0-9][a-z0-9._-]{0,63}$/;
@@ -104,19 +106,36 @@ export function loadTlsAnchorClientConfig(configFile){
  * implemented by an operator, not inferred from this reference API.
  */
 export function createMutualTlsAnchorServer({
-  directory,anchorPrivateKey,anchorKeyId,tlsServerKey,tlsServerCert,clientCa
+  directory,anchorPrivateKey,anchorKeyId,tlsServerKey,tlsServerCert,clientCa,
+  clientAccessPolicyFile
 }={}){
   if(!tlsServerKey||!tlsServerCert||!clientCa)
     throw new TypeError('Mutual TLS server credentials required');
   validCertificate(tlsServerCert);validCertificate(clientCa);
   keyMatchesCertificate(tlsServerCert,tlsServerKey);
+  const handler=createReadOnlyAnchorHandler({
+    directory,privateKey:anchorPrivateKey,keyId:anchorKeyId
+  });
+  // The R12 reference server remains compatible without this new option.
+  // R13's remote deployment requires the operator to supply it. No CA-wide
+  // trust can silently grant access when this option is enabled.
+  if(clientAccessPolicyFile)
+    loadRequiredClientPolicy(clientAccessPolicyFile);
   return createHttpsServer({
     key:tlsServerKey,cert:tlsServerCert,ca:clientCa,
     minVersion:'TLSv1.3',maxVersion:'TLSv1.3',
     requestCert:true,rejectUnauthorized:true
-  },createReadOnlyAnchorHandler({
-    directory,privateKey:anchorPrivateKey,keyId:anchorKeyId
-  }));
+  },(req,res)=>{
+    if(clientAccessPolicyFile){
+      try{requireAllowedAnchorClient(req,clientAccessPolicyFile);}
+      catch{
+        res.writeHead(403,{'Content-Type':'application/json','Cache-Control':'no-store'});
+        res.end('{"error":"DENIED"}\\n');
+        return;
+      }
+    }
+    handler(req,res);
+  });
 }
 function httpsAttestation(client,nonce){
   return new Promise((resolve,reject)=>{
@@ -167,7 +186,7 @@ function httpsAttestation(client,nonce){
  * On network, certificate, timeout or signature failure, execution REFUSES.
  */
 export async function assertMutualTlsExternalAnchor({
-  clientConfig,witnessDir,lifecyclePolicy,checkpointTrustConfig
+  clientConfig,witnessDir,lifecyclePolicy,checkpointTrustConfig,continuityDir
 }={}){
   if(!plain(clientConfig))throw new TypeError('Operator mTLS anchor config required');
   exact(clientConfig,['endpoint','keyId','key','ca','clientCert','clientKey',
@@ -178,5 +197,15 @@ export async function assertMutualTlsExternalAnchor({
   });
   const nonce=randomBytes(16).toString('hex');
   const proof=await httpsAttestation(clientConfig,nonce);
-  return verifyExternalAnchorProof({proof,nonce,local,clientConfig});
+  const verified=verifyExternalAnchorProof({proof,nonce,local,clientConfig});
+  // Optional R13 caller-owned monotonic high-water. The R12 reference client
+  // remains unchanged. No permit nonce has been consumed at this point.
+  if(continuityDir){
+    acceptAnchorContinuity(continuityDir,{
+      epoch:verified.epoch,
+      witnessSha256:local.witnessSha256,
+      anchorAttestationSha256:verified.anchorAttestationSha256
+    });
+  }
+  return verified;
 }
