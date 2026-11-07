@@ -346,3 +346,64 @@ test('strict owner permissions required for client TLS key, CA and config files'
     assert.throws(()=>loadTlsAnchorClientConfig(alias),/symlink/);
   });
 });
+
+test('mutual TLS alone cannot authorize replayed Ed25519 attestation with wrong nonce',async()=>{
+  await isolated(async f=>{
+    await f.start();
+    const config=JSON.parse(readFileSync(f.paths.anchorConfig,'utf8'));
+    const url=new URL(config.endpoint);
+    url.searchParams.set('nonce','a'.repeat(32));
+    const captured=await new Promise((resolve,reject)=>{
+      const req=httpsRequest(url,{
+        ca:readFileSync(TLS.trusted_crt),cert:readFileSync(TLS.client_crt),
+        key:readFileSync(TLS.client_key),rejectUnauthorized:true,minVersion:'TLSv1.3'
+      },res=>{
+        let out='';
+        res.on('data',b=>out+=b);
+        res.on('end',()=>resolve(out));
+      });
+      req.on('error',reject);req.end();
+    });
+    assert.match(captured,/ExternalAnchorAttestation/);
+    const replay=createHttpsServer({
+      key:readFileSync(TLS.server_key),cert:readFileSync(TLS.server_crt),
+      ca:readFileSync(TLS.trusted_crt),requestCert:true,rejectUnauthorized:true,
+      minVersion:'TLSv1.3',maxVersion:'TLSv1.3'
+    },(_req,res)=>{
+      res.writeHead(200,{'Content-Type':'application/json'});
+      res.end(captured);
+    });
+    await new Promise(resolve=>replay.listen(0,'127.0.0.1',resolve));
+    try{
+      f.write(f.paths.anchorConfig,{
+        ...config,endpoint:'https://127.0.0.1:'+replay.address().port+'/v1/attest'
+      });
+      const denied=await execute(f,await envelope(f));
+      assert.equal(denied.body.status,'REFUSE');
+      assert.equal(readdirSync(f.paths.ledger).length,0);
+      assert.equal(verifyTrustAuditDirectory(f.paths.audit).refused,1);
+    }finally{await new Promise(resolve=>replay.close(resolve));}
+  });
+});
+test('large signed-looking mTLS replies cannot bypass the bounded response parser',async()=>{
+  await isolated(async f=>{
+    await f.start();
+    const config=JSON.parse(readFileSync(f.paths.anchorConfig,'utf8'));
+    const spam=createHttpsServer({
+      key:readFileSync(TLS.server_key),cert:readFileSync(TLS.server_crt),
+      ca:readFileSync(TLS.trusted_crt),requestCert:true,rejectUnauthorized:true,
+      minVersion:'TLSv1.3',maxVersion:'TLSv1.3'
+    },(_req,res)=>{
+      res.writeHead(200,{'Content-Type':'application/json'});
+      res.end('X'.repeat(5000));
+    });
+    await new Promise(resolve=>spam.listen(0,'127.0.0.1',resolve));
+    try{
+      f.write(f.paths.anchorConfig,{
+        ...config,endpoint:'https://127.0.0.1:'+spam.address().port+'/v1/attest'
+      });
+      assert.equal((await execute(f,await envelope(f))).body.status,'REFUSE');
+      assert.equal(readdirSync(f.paths.ledger).length,0);
+    }finally{await new Promise(resolve=>spam.close(resolve));}
+  });
+});
