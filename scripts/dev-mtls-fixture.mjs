@@ -36,12 +36,14 @@ export function createEphemeralTlsFixture(root){
     'subjectAltName=IP:127.0.0.1\nextendedKeyUsage=serverAuth\nkeyUsage=digitalSignature,keyEncipherment\n');
   certificate('client','trusted',
     'extendedKeyUsage=clientAuth\nkeyUsage=digitalSignature,keyEncipherment\n');
+  certificate('client-other','trusted',
+    'extendedKeyUsage=clientAuth\\nkeyUsage=digitalSignature,keyEncipherment\\n'.replaceAll('\\n','\n'));
   ca('rogue');
   certificate('rogue-client','rogue',
     'extendedKeyUsage=clientAuth\nkeyUsage=digitalSignature,keyEncipherment\n');
   const paths={};
   for(const name of ['trusted.crt','trusted.key','server.crt','server.key',
-    'client.crt','client.key','rogue.crt','rogue.key','rogue-client.crt','rogue-client.key']){
+    'client.crt','client.key','client-other.crt','client-other.key','rogue.crt','rogue.key','rogue-client.crt','rogue-client.key']){
     paths[name.replace(/[-.]/g,'_')]=join(dir,name);
     chmodSync(join(dir,name),0o600);
   }

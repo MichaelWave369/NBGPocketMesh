@@ -28,6 +28,7 @@ jobs:
       - run: npm run demo:checkpoint
       - run: npm run demo:anchor
       - run: npm run demo:mtls
+      - run: npm run demo:remote
       - run: python -m py_compile scripts/e1b_lab.py scripts/e1b_dataset.py scripts/e1c_audit.py
       - run: python -m unittest discover -s tests_py -v
 

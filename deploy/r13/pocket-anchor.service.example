@@ -1,0 +1,51 @@
+# EXAMPLE ONLY. Review host paths, account, interface and firewall before use.
+# This unit is meant for an INDEPENDENT Linux authority machine, not the
+# PocketMesh execution host. It has NOT been installed or tested off-host.
+[Unit]
+Description=PocketMesh read-only private-network mTLS Anchor (R13 research)
+Documentation=https://github.com/MichaelWave369/NBGPocketMesh
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=pocket-anchor
+Group=pocket-anchor
+WorkingDirectory=/opt/NBGPocketMesh
+UMask=0077
+
+# Deliberate private-interface bind consent, NOT authentication.
+Environment=POCKET_ANCHOR_PRIVATE_BIND_APPROVED=1
+
+# Replace 10.20.30.40 with an actual private IPv4 address belonging to
+# THIS authority host. Never use 0.0.0.0 or expose it to the public Internet.
+ExecStart=/usr/bin/node /opt/NBGPocketMesh/scripts/pocket-remote-anchor-authority.mjs /var/lib/pocket-anchor/epochs /etc/pocket-anchor/anchor-ed25519-private.pem anchor-operator /etc/pocket-anchor/tls-server.key /etc/pocket-anchor/tls-server.crt /etc/pocket-anchor/client-ca.crt /etc/pocket-anchor/client-access.json 10.20.30.40 8788
+Restart=on-failure
+RestartSec=5s
+TimeoutStopSec=10s
+
+# The service needs READ access to the owner-only state and signer files,
+# but its mount namespace should not let the running daemon update them.
+# Offline operator CLI promotion happens OUTSIDE the service namespace.
+ProtectSystem=strict
+ReadOnlyPaths=/var/lib/pocket-anchor /etc/pocket-anchor
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+NoNewPrivileges=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+LockPersonality=true
+RestrictSUIDSGID=true
+CapabilityBoundingSet=
+AmbientCapabilities=
+RestrictAddressFamilies=AF_INET AF_UNIX
+MemoryMax=512M
+
+# This unit does NOT configure a network firewall, certificate revocation
+# distribution, independent administrator, HSM, or immutable monotonic state.
+# The operator must implement those independently.
+
+[Install]
+WantedBy=multi-user.target
