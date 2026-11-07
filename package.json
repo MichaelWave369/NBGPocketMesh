@@ -19,7 +19,8 @@
     "demo:executor": "node scripts/pocket-executor-process-demo.mjs",
     "demo:phiid": "node scripts/pocket-phiid-approval-demo.mjs",
     "demo:trust": "node scripts/pocket-trust-lifecycle-demo.mjs",
-    "demo:witness": "node scripts/pocket-policy-witness-demo.mjs"
+    "demo:witness": "node scripts/pocket-policy-witness-demo.mjs",
+    "demo:checkpoint": "node scripts/pocket-signed-checkpoint-demo.mjs"
   },
   "engines": {
     "node": ">=20"
