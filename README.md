@@ -245,3 +245,16 @@ npm run demo:phiid
 ### PhiID localhost issuer compatibility (development only)
 
 [See the strict dev-issuer compatibility contract](docs/PHIID_LOOPBACK_ISSUER_COMPAT.md). The existing Ed25519 approval verifier now recognizes only PhiID's exact `http://127.0.0.1:8080/realms/phiid-dev` test issuer in addition to normal HTTPS issuers. The operator must still explicitly allow the exact `(iss, sub)` pair and pin two independent signing keys. All other HTTP issuers fail closed; this is **not** live OIDC verification or production authorization.
+
+## R8 · Pocket Trust Lifecycle and local audit
+
+[R8 Trust Lifecycle protocol and limits](docs/POCKET_TRUST_LIFECYCLE_R8.md). An additive **one-shot, dual-signature** worker now enforces an operator-owned lifecycle allowlist for *both* permit and approval signing keys. Exact Ed25519 public-key fingerprints are pinned, and a key can be marked **revoked** even while its old public material remains present in the original trust maps. Overlapping old/new keys support a controlled manual rotation.
+
+The worker writes an owner-restricted **START** audit record before attempting any execution, and **PERFORM/REFUSE** evidence afterward. A local verifier detects malformed/altered records and orphaned attempts. These hashes and local files provide drift detection and a best-effort journal, **not an immutable forensic audit or secure policy rollback protection**. Earlier research worker APIs still exist; real deployments must prevent using them to bypass this optional policy.
+
+```sh
+npm test
+npm run demo:trust
+```
+
+The demo rotates **temporary keys only**, executes the approved synthetic network-health fixture, and verifies retirement and audit. No PhiOS, live networking, third-party code, real-user production authority, or sandboxing is included.
