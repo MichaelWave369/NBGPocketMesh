@@ -130,7 +130,7 @@ export function createMutualTlsAnchorServer({
       try{requireAllowedAnchorClient(req,clientAccessPolicyFile);}
       catch{
         res.writeHead(403,{'Content-Type':'application/json','Cache-Control':'no-store'});
-        res.end('{"error":"DENIED"}\\n');
+        res.end(JSON.stringify({error:'DENIED'})+String.fromCharCode(10));
         return;
       }
     }
