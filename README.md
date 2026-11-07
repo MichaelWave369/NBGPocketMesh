@@ -270,3 +270,15 @@ npm run demo:witness
 ```
 
 This is **local rollback detection while the operator witness survives**, not genuine tamperproof anti-rollback protection against an administrator who can erase both policy and witness. The included admin script requires deliberate operator invocation to initialize/advance the witness; the runtime request cannot modify it. No live PhiOS actions, external signer HSM, production OIDC authorization or safe untrusted-code sandboxing is included.
+
+
+## R10 · Independent signed trust checkpoints (offline research)
+
+[Read the R10 signed checkpoint protocol](docs/POCKET_SIGNED_CHECKPOINT_R10.md). Our opt-in one-shot worker now requires an **independently signed, short-lived operator checkpoint** over the latest R9 policy witness. The checkpoint uses a **third Ed25519 signing key**, distinct from Pocket Album permit signing and PhiID action approval, and the worker receives only public key material. A stale, altered, expired, unsigned or untrusted checkpoint refuses execution without spending the permit nonce; all refusals retain the R8 audit journal.
+
+```sh
+npm test
+npm run demo:checkpoint
+```
+
+Offline operator-issued checkpoints are **not tamperproof monotonic trust anchors**. A privileged attacker with control of policy, witness, signed historical checkpoint, executable and clock can still restore past state. Production requires independent key custody, a monotonic external authority, real sandboxing and blocking older bypass worker APIs. The demo uses approved synthetic local network fixtures only.
