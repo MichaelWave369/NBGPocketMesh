@@ -140,12 +140,12 @@ export async function executeTrustLifecycleRequest(envelope,{executorConfig,appr
     if(envelope.schema!==AUTHORIZED_REQUEST_SCHEMA)throw new TypeError('Unknown request type');
     // R9 optional host-owned witness is checked *after* the START audit and
     // immediately before the rest of authorization; old research APIs remain.
-    if(policyWitnessCheck)policyWitnessCheck();
+    if(policyWitnessCheck)await policyWitnessCheck();
     requireActive('permit',envelope.permit?.keyId,
       executorConfig.trustedKeys,lifecyclePolicy.permitSigners);
     requireActive('approval',envelope.approval?.authorityKeyId,
       approvalPolicy.trustedApprovers,lifecyclePolicy.approvalSigners);
-    if(policyWitnessCheck)policyWitnessCheck();
+    if(policyWitnessCheck)await policyWitnessCheck();
     result=await executePhiIDAuthorizedRequest(envelope,{executorConfig,approvalPolicy});
     if(result.status!=='PERFORM')throw new TypeError('Downstream executor refused');
   }catch(err){failed=err;}
