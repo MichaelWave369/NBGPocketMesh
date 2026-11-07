@@ -18,7 +18,8 @@
     "demo:signed": "node scripts/pocket-signed-gate-demo.mjs",
     "demo:executor": "node scripts/pocket-executor-process-demo.mjs",
     "demo:phiid": "node scripts/pocket-phiid-approval-demo.mjs",
-    "demo:trust": "node scripts/pocket-trust-lifecycle-demo.mjs"
+    "demo:trust": "node scripts/pocket-trust-lifecycle-demo.mjs",
+    "demo:witness": "node scripts/pocket-policy-witness-demo.mjs"
   },
   "engines": {
     "node": ">=20"
