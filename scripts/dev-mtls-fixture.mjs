@@ -10,7 +10,7 @@ import {
 import {join} from 'node:path';
 import {createHash,X509Certificate} from 'node:crypto';
 
-export function createEphemeralTlsFixture(root){
+export function createEphemeralTlsFixture(root,{remoteIPv4=null}={}){
   const dir=join(root,'tls');
   mkdirSync(dir,{mode:0o700});
   const run=(...args)=>execFileSync('openssl',args,{
@@ -34,6 +34,13 @@ export function createEphemeralTlsFixture(root){
   ca('trusted');
   certificate('server','trusted',
     'subjectAltName=IP:127.0.0.1\nextendedKeyUsage=serverAuth\nkeyUsage=digitalSignature,keyEncipherment\n');
+  if(remoteIPv4){
+    if(!/^\d{1,3}(?:\.\d{1,3}){3}$/.test(remoteIPv4)||
+       remoteIPv4.split('.').some(v=>Number(v)>255))
+      throw new TypeError('Invalid test authority IPv4 address');
+    certificate('server-remote','trusted',
+      `subjectAltName=IP:${remoteIPv4}\nextendedKeyUsage=serverAuth\nkeyUsage=digitalSignature,keyEncipherment\n`);
+  }
   certificate('client','trusted',
     'extendedKeyUsage=clientAuth\nkeyUsage=digitalSignature,keyEncipherment\n');
   certificate('client-other','trusted',
@@ -43,13 +50,16 @@ export function createEphemeralTlsFixture(root){
     'extendedKeyUsage=clientAuth\nkeyUsage=digitalSignature,keyEncipherment\n');
   const paths={};
   for(const name of ['trusted.crt','trusted.key','server.crt','server.key',
+    ...(remoteIPv4?['server-remote.crt','server-remote.key']:[]),
     'client.crt','client.key','client-other.crt','client-other.key','rogue.crt','rogue.key','rogue-client.crt','rogue-client.key']){
     paths[name.replace(/[-.]/g,'_')]=join(dir,name);
     chmodSync(join(dir,name),0o600);
   }
   const serverCert=new X509Certificate(readFileSync(paths.server_crt));
+  const remoteCert=remoteIPv4?new X509Certificate(readFileSync(paths.server_remote_crt)):null;
   return {
     ...paths,
+    ...(remoteCert?{remoteServerCertSha256:createHash('sha256').update(remoteCert.raw).digest('hex')}:{}),
     serverCertSha256:createHash('sha256').update(serverCert.raw).digest('hex')
   };
 }

@@ -23,7 +23,8 @@
     "demo:checkpoint": "node scripts/pocket-signed-checkpoint-demo.mjs",
     "demo:anchor": "node scripts/pocket-external-anchor-demo.mjs",
     "demo:mtls": "node scripts/pocket-mtls-anchor-demo.mjs",
-    "demo:remote": "node scripts/pocket-remote-authority-demo.mjs"
+    "demo:remote": "node scripts/pocket-remote-authority-demo.mjs",
+    "demo:two-container": "node scripts/pocket-two-container-trust-lab.mjs"
   },
   "engines": {
     "node": ">=20"

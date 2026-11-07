@@ -1,0 +1,92 @@
+# R14 CI LAB ONLY. Two separate container mount namespaces, UIDs and service
+# roles on ONE shared Docker host. Not two physical/security-administrative hosts.
+# Test certificates and all files are generated outside the repository.
+# No ports are published; traffic stays on an internal Docker bridge.
+name: pocket-r14-lab
+x-node-base: &node-base
+  image: node:22-bookworm-slim
+  working_dir: /home/node
+  read_only: true
+  cap_drop: [ALL]
+  security_opt:
+    - no-new-privileges:true
+  tmpfs:
+    - /tmp:rw,noexec,nosuid,nodev,size=32m
+services:
+  authority:
+    <<: *node-base
+    user: "10001:10001"
+    environment:
+      POCKET_ANCHOR_PRIVATE_BIND_APPROVED: "1"
+    volumes:
+      - ${R14_REPO_DIR:?}/scripts:/home/node/scripts:ro
+      - ${R14_REPO_DIR:?}/src:/home/node/src:ro
+      - ${R14_AUTHORITY_DIR:?}:/authority:ro
+    command:
+      - node
+      - scripts/pocket-remote-anchor-authority.mjs
+      - /authority/epochs
+      - /authority/anchor-private.pem
+      - anchor-r14
+      - /authority/server.key
+      - /authority/server.crt
+      - /authority/ca.crt
+      - /authority/client-access.json
+      - "172.29.77.10"
+      - "8788"
+    networks:
+      trust:
+        ipv4_address: 172.29.77.10
+
+  # Operator-only mutation path. This container has no network and is NOT
+  # running when the read-only authority serves attestations.
+  authority-admin:
+    <<: *node-base
+    profiles: [operator]
+    user: "10001:10001"
+    environment:
+      POCKET_ANCHOR_ADMIN_CONFIRM: "1"
+      POCKET_ANCHOR_CLIENT_ADMIN_CONFIRM: "1"
+    volumes:
+      - ${R14_REPO_DIR:?}/scripts:/home/node/scripts:ro
+      - ${R14_REPO_DIR:?}/src:/home/node/src:ro
+      - ${R14_AUTHORITY_DIR:?}:/authority:rw
+    network_mode: none
+    command: [node, --version]
+
+  executor-old:
+    <<: *node-base
+    user: "10002:10002"
+    volumes:
+      - ${R14_REPO_DIR:?}/scripts:/home/node/scripts:ro
+      - ${R14_REPO_DIR:?}/src:/home/node/src:ro
+      - ${R14_EXECUTOR_OLD_DIR:?}:/trust:rw
+    command: &executor-command
+      - node
+      - scripts/pocket-continuity-worker.mjs
+      - /trust/executor.json
+      - /trust/approval.json
+      - /trust/lifecycle.json
+      - /trust/witness
+      - /trust/checkpoint-config.json
+      - /trust/anchor-client.json
+      - /trust/continuity
+    networks: [trust]
+
+  executor-new:
+    <<: *node-base
+    user: "10002:10002"
+    volumes:
+      - ${R14_REPO_DIR:?}/scripts:/home/node/scripts:ro
+      - ${R14_REPO_DIR:?}/src:/home/node/src:ro
+      - ${R14_EXECUTOR_NEW_DIR:?}:/trust:rw
+    command: *executor-command
+    networks: [trust]
+
+networks:
+  trust:
+    internal: true
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.29.77.0/24
