@@ -282,3 +282,17 @@ npm run demo:checkpoint
 ```
 
 Offline operator-issued checkpoints are **not tamperproof monotonic trust anchors**. A privileged attacker with control of policy, witness, signed historical checkpoint, executable and clock can still restore past state. Production requires independent key custody, a monotonic external authority, real sandboxing and blocking older bypass worker APIs. The demo uses approved synthetic local network fixtures only.
+
+
+## R11 · Independent signed policy anchor (development proof)
+
+[R11 architecture and limitations](docs/POCKET_EXTERNAL_ANCHOR_R11.md). A new one-shot local worker now requires a **fresh, nonce-bound Ed25519 attestation from a separate read-only loopback authority**. That authority maintains its own create-only policy epoch history outside the executor's R9 witness directory. When the authority reports a newer epoch, even restoring the **entire old local R8/R9/R10 policy, witness and signed checkpoint** causes execution to refuse without consuming the one-use permit.
+
+The anchor is a **fourth independently configured signing role**, distinct from permit, PhiID action approval and checkpoint. Its reference service has **no network administration endpoints**; promotion requires a separate operator CLI. Unavailability, stale/mismatched state, tampered replies, unexpected endpoints and key substitution fail closed.
+
+```sh
+npm test
+npm run demo:anchor
+```
+
+This is a cross-process **localhost prototype**, NOT an actually off-host authority, secure remote HTTPS transport, immutable monotonic counter, host-level privilege isolation, or production permission to run real PhiOS work. All tracks remain reviewed synthetic network fixtures; historical research workers still exist separately.
