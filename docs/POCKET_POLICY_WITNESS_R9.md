@@ -35,7 +35,7 @@ These invariants are enforced in a **separate operator promotion step**. The one
 
 ## Operator-only deployment procedure (development host)
 
-Use **three separate restricted directories** for the witness, R8 audit journal and the one-use nonce ledger. Ideally the witness is maintained under a **distinct OS administrative account**, with a supervisor making it readable to the executor but not writable by it. That separation is **not automatically configured** by this project and has to be designed for your OS.
+Use **three separate restricted directories** for the witness, R8 audit journal and the one-use nonce ledger. The prototype currently checks POSIX file ownership against the **same execution UID**, so it does **not** implement a separate read-only account for the worker. A truly independent admin-owned witness and read-only executor, with carefully reviewed ACLs or a remote witness service, is a **future security requirement**, not a property of this implementation.
 
 Prepare the R8 policy file with `policyEpoch: 1` and keys already independently reviewed. Provision an **empty** witness directory with restrictive permissions (on POSIX, mode 0700 and appropriate ownership). The following explicit operator command creates `epoch-000001.json`:
 
