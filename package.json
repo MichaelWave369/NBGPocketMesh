@@ -22,7 +22,8 @@
     "demo:witness": "node scripts/pocket-policy-witness-demo.mjs",
     "demo:checkpoint": "node scripts/pocket-signed-checkpoint-demo.mjs",
     "demo:anchor": "node scripts/pocket-external-anchor-demo.mjs",
-    "demo:mtls": "node scripts/pocket-mtls-anchor-demo.mjs"
+    "demo:mtls": "node scripts/pocket-mtls-anchor-demo.mjs",
+    "demo:remote": "node scripts/pocket-remote-authority-demo.mjs"
   },
   "engines": {
     "node": ">=20"
