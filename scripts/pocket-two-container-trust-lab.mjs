@@ -227,6 +227,14 @@ try{
     "process.exit(require('node:fs').existsSync('/authority/anchor-private.pem')?2:0)"]);
   compose(['exec','-T','authority','node','-e',
     "process.exit(require('node:fs').existsSync('/trust/checkpoint.json')?2:0)"]);
+  // Inspect actual process UIDs instead of assuming Compose applied the
+  // configured identities, and prove the running authority's state is RO.
+  compose(['exec','-T','authority','node','-e',
+    "if(process.getuid()!==10001)process.exit(11)"]);
+  compose(['run','--rm','--no-deps','-T','executor-old','node','-e',
+    "if(process.getuid()!==10002)process.exit(12)"]);
+  compose(['exec','-T','authority','node','-e',
+    "const fs=require('node:fs');try{const fd=fs.openSync('/authority/epochs/forbidden-write','wx');fs.closeSync(fd);process.exit(31)}catch(e){if(e.code!=='EROFS'&&e.code!=='EACCES')process.exit(32)}"]);
 
   runExecutor('executor-old',await makeEnvelope('a'),'PERFORM');
   // Epoch 2 executor cannot accept a stale epoch 1 independent authority.
@@ -267,6 +275,7 @@ try{
     approvals:'Ed25519 permit + PhiID review + checkpoint + independent authority',
     verified:{
       crossContainerMTLS:true,unmountedPrivateKeys:true,
+      distinctContainerUIDs:true,readOnlyAuthorityState:true,
       staleLocalBundleRefused:true,epochPromotionOperatorOnly:true,
       replayRefused:true,networkOutageRefused:true,
       restartedAuthorityWorks:true,revokedTLSClientRefused:true
