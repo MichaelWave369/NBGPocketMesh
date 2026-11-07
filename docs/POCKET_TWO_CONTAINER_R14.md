@@ -44,7 +44,7 @@ The authority service binds a *fixed literal RFC1918 IPv4 address* on an interna
 
 The authority container mounts its epoch history, certificate allowlist and signing material **read-only** and starts without elevated Linux capabilities or new-privilege escalation. An ephemeral, operator-only helper container has a writable mount of that authority directory but **no network namespace**. It advances the independent epoch and revokes the mTLS client only when invoked by the test controller, never by a remote HTTP request.
 
-The executor container sees the repository sources read-only and a *different* owner-restricted volume containing R8 permit ledger, attempt audit, R9 witness, R10 signed checkpoint, TLS client credentials and R13 high-water continuity. The authority's signing key and directory are **not mounted into it**. The test independently verifies that each runtime cannot access the other's sensitive mount.
+The executor container sees only the repository's @src/@ and @scripts/@ directories as read-only mounts (no @.git/@ or workspace secrets). CI also sets @persist-credentials: false@ for checkout. It receives a *different* owner-restricted volume containing R8 permit ledger, attempt audit, R9 witness, R10 signed checkpoint, TLS client credentials and R13 high-water continuity. The authority's signing key and directory are **not mounted into it**. The test independently verifies that each runtime cannot access the other's sensitive mount.
 
 There are two executor volumes:
 - `executor-old`: complete, internally valid R8/R9/R10 **epoch-1** policy/witness/checkpoint snapshot
