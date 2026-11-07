@@ -8,6 +8,7 @@ import {
 import {join} from 'node:path';
 import {tmpdir} from 'node:os';
 import {spawn,spawnSync} from 'node:child_process';
+import {createServer} from 'node:http';
 import {fileURLToPath} from 'node:url';
 import {createDemoLibrary} from '../src/pocket-library.mjs';
 import {prepareExecutionRequest,signExecutionRequest} from '../src/pocket-signed-gate.mjs';
@@ -323,5 +324,56 @@ test('protected anchor client config rejects broad permissions and symlinks',asy
     const alias=join(f.root,'anchor-alias.json');
     symlinkSync(f.paths.anchorConfig,alias);
     assert.throws(()=>loadExternalAnchorClientConfig(alias),/symbolic link/);
+  });
+});
+
+test('replayed properly signed response with old challenge nonce is refused',async()=>{
+  await isolated(async f=>{
+    await f.start();
+    const trusted=JSON.parse(readFileSync(f.paths.anchorConfig,'utf8'));
+    const original=new URL(trusted.endpoint);
+    original.searchParams.set('nonce','a'.repeat(32));
+    const captured=await (await fetch(original)).text();
+    // This adversarial localhost proxy replays an authentic signature whose
+    // challenge nonce differs from the executor's newly random one.
+    const replayServer=createServer((_req,res)=>{
+      res.writeHead(200,{'Content-Type':'application/json'});
+      res.end(captured);
+    });
+    await new Promise((resolve,reject)=>{
+      replayServer.once('error',reject);
+      replayServer.listen(0,'127.0.0.1',resolve);
+    });
+    try{
+      f.write(f.paths.anchorConfig,{
+        ...trusted,
+        endpoint:'http://127.0.0.1:'+replayServer.address().port+'/v1/attest'
+      });
+      const denied=await execute(f,await envelope(f));
+      assert.equal(denied.body.status,'REFUSE');
+      assert.equal(readdirSync(f.paths.ledger).length,0);
+      assert.equal(verifyTrustAuditDirectory(f.paths.audit).refused,1);
+    }finally{
+      await new Promise(resolve=>replayServer.close(resolve));
+    }
+  });
+});
+test('authority HTTP redirects cannot be used as an execution fallback',async()=>{
+  await isolated(async f=>{
+    await f.start();
+    const trusted=JSON.parse(readFileSync(f.paths.anchorConfig,'utf8'));
+    const redirector=createServer((_req,res)=>{
+      res.writeHead(302,{Location:trusted.endpoint});
+      res.end();
+    });
+    await new Promise(resolve=>redirector.listen(0,'127.0.0.1',resolve));
+    try{
+      f.write(f.paths.anchorConfig,{
+        ...trusted,endpoint:'http://127.0.0.1:'+redirector.address().port+'/v1/attest'
+      });
+      const denied=await execute(f,await envelope(f));
+      assert.equal(denied.body.status,'REFUSE');
+      assert.equal(readdirSync(f.paths.ledger).length,0);
+    }finally{await new Promise(resolve=>redirector.close(resolve));}
   });
 });
