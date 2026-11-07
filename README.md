@@ -258,3 +258,15 @@ npm run demo:trust
 ```
 
 The demo rotates **temporary keys only**, executes the approved synthetic network-health fixture, and verifies retirement and audit. No PhiOS, live networking, third-party code, real-user production authority, or sandboxing is included.
+
+
+## R9 · Policy Witness and stale trust-policy detection
+
+[R9 protocol and operator limitations](docs/POCKET_POLICY_WITNESS_R9.md). A new **opt-in one-shot worker** compares its current Ed25519 signer lifecycle policy to a separately stored, create-only sequence of witnessed epochs. It refuses restored old policy files, changed policy values under an existing epoch, revived retired signer IDs, altered public key fingerprints and missing witness history, while retaining the R8 local attempt journal and permit nonce replay checks.
+
+```sh
+npm test
+npm run demo:witness
+```
+
+This is **local rollback detection while the operator witness survives**, not genuine tamperproof anti-rollback protection against an administrator who can erase both policy and witness. The included admin script requires deliberate operator invocation to initialize/advance the witness; the runtime request cannot modify it. No live PhiOS actions, external signer HSM, production OIDC authorization or safe untrusted-code sandboxing is included.
