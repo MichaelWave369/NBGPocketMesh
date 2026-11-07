@@ -308,3 +308,17 @@ npm run demo:mtls
 ```
 
 The demo generates ephemeral CA/server/client certificates through OpenSSL, runs an HTTPS authority on loopback, performs one built-in synthetic network-health album and verifies that rolling back the entire local R8/R9/R10 trust bundle is refused when the independent authority remembers the newer epoch. **The TLS client private key is accessible to the execution process** for transport authentication. Application signer private keys remain outside it. This does **not** deploy the authority off-host, create an immutable monotonic trust root, harden OS privileges, or authorize real PhiOS effects.
+
+
+## R13 · Private-network authority deployment and client trust continuity
+
+[R13 operator protocol, deployment example, and security limits](docs/POCKET_REMOTE_AUTHORITY_R13.md). An additive **private IPv4 authority entrypoint** requires explicit nonloopback consent and a protected allowlist of **individual CA-valid TLS client certificate SHA-256 fingerprints**. The policy is rechecked on every attestation, allowing controlled certificate overlap and revocation without granting implicit trust to every certificate issued by the CA.
+
+The new **one-shot R13 continuity worker** retains the highest Ed25519-attested epoch and R9 witness digest in an owner-only, create-only local continuity history. It refuses lower or conflicting witnessed states while preserving R7 one-use permits, R8 audits, R9/R10 trust policy, and R12 mutual TLS. A [sample systemd unit](deploy/r13/pocket-anchor.service.example) documents how the read-only authority could run on a separately administered private-network host. It is a **reference, not a deployed or tested remote installation**.
+
+```sh
+npm test
+npm run demo:remote
+```
+
+The demo uses disposable test certificates on **one machine**; no production device, cloud action or live PhiOS permission is granted. The authority history, TLS client access policy and executor continuity are **ordinary local protected files, not cryptographically immutable monotonic storage**. A separately administered host, tested firewall policy, independent key custody, certificate lifecycle, and least-privilege sandbox remain necessary.
