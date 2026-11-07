@@ -108,7 +108,9 @@ function persistAudit(dir,filename,unsigned){
  * AFTER code ran, the caller gets a failure and the START remains as evidence
  * of an unresolved attempt. There is no rollback of real-world effects.
  */
-export async function executeTrustLifecycleRequest(envelope,{executorConfig,approvalPolicy,lifecyclePolicy}={}){
+export async function executeTrustLifecycleRequest(envelope,{executorConfig,approvalPolicy,lifecyclePolicy,policyWitnessCheck}={}){
+  if(policyWitnessCheck!==undefined&&typeof policyWitnessCheck!=='function')
+    throw new TypeError('Invalid operator-only policy witness');
   if(!plain(lifecyclePolicy)||!plain(executorConfig)||!plain(approvalPolicy))
     throw new TypeError('Trusted operator policies required');
   // This policy is never a client input; only accept a validated host-loaded
@@ -136,10 +138,14 @@ export async function executeTrustLifecycleRequest(envelope,{executorConfig,appr
   try{
     exact(envelope,['schema','permit','approval'],'authorized request');
     if(envelope.schema!==AUTHORIZED_REQUEST_SCHEMA)throw new TypeError('Unknown request type');
+    // R9 optional host-owned witness is checked *after* the START audit and
+    // immediately before the rest of authorization; old research APIs remain.
+    if(policyWitnessCheck)policyWitnessCheck();
     requireActive('permit',envelope.permit?.keyId,
       executorConfig.trustedKeys,lifecyclePolicy.permitSigners);
     requireActive('approval',envelope.approval?.authorityKeyId,
       approvalPolicy.trustedApprovers,lifecyclePolicy.approvalSigners);
+    if(policyWitnessCheck)policyWitnessCheck();
     result=await executePhiIDAuthorizedRequest(envelope,{executorConfig,approvalPolicy});
     if(result.status!=='PERFORM')throw new TypeError('Downstream executor refused');
   }catch(err){failed=err;}
