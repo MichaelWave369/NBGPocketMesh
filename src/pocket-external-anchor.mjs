@@ -151,13 +151,13 @@ function attest(directory,nonce,keyId,privateKey){
   return {schema:ANCHOR_ATTESTATION_SCHEMA,algorithm:'Ed25519',
     keyId,statement,signature};
 }
-/** Read-only loopback authority. No POST, no admin routes, no remote exposure. */
-export function createLocalAnchorServer({directory,privateKey,keyId}={}){
+/** Reusable read-only authority handler for R11 HTTP and R12 mutual TLS.
+ * This is NEVER a policy mutation/admin interface. */
+export function createReadOnlyAnchorHandler({directory,privateKey,keyId}={}){
   if(!TOKEN.test(keyId)||!isAbsolute(directory))throw new TypeError('Bad authority configuration');
   const signer=privateSigner(privateKey);
-  // Check independent state on startup AND every request.
   inspectAnchor(directory);
-  return createServer((req,res)=>{
+  return (req,res)=>{
     const deny=(status=404)=>{
       res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store'});
       res.end('{"error":"DENIED"}\n');
@@ -172,7 +172,11 @@ export function createLocalAnchorServer({directory,privateKey,keyId}={}){
       res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'});
       res.end(JSON.stringify(result)+'\n');
     }catch{return deny(503);}
-  });
+  };
+}
+/** R11 reference loopback HTTP authority. */
+export function createLocalAnchorServer(options={}){
+  return createServer(createReadOnlyAnchorHandler(options));
 }
 function validateClient(raw){
   exact(raw,['schema','endpoint','keyId','publicKeyPem','timeoutMs','maxAgeMs'],'anchor client config');
@@ -219,24 +223,14 @@ async function boundedResponse(response){
   return JSON.parse(Buffer.concat(chunks).toString('utf8'));
 }
 /**
- * Nonce-bound challenge-response from a separate authority. Each invocation
- * queries fresh state. If unreachable or mismatching: REFUSE. No cached
- * 'last known good' fallback and no user-provided endpoint/trust root.
+ * Shared strict attestation verification for R11 HTTP and R12 mTLS.
+ * The caller must independently establish transport authenticity and
+ * supply the exact nonce it generated for this request.
  */
-export async function assertExternalAnchor({
-  clientConfig,witnessDir,lifecyclePolicy,checkpointTrustConfig
-}={}){
-  if(!plain(clientConfig))throw new TypeError('Host-pinned anchor config required');
-  exact(clientConfig,['endpoint','keyId','key','timeoutMs','maxAgeMs'],'host anchor config');
-  const local=assertSignedTrustCheckpoint({
-    witnessDir,lifecyclePolicy,trustConfig:checkpointTrustConfig
-  });
-  const nonce=randomBytes(16).toString('hex');
-  const endpoint=new URL(clientConfig.endpoint);
-  endpoint.searchParams.set('nonce',nonce);
-  const res=await fetch(endpoint,{method:'GET',redirect:'error',
-    cache:'no-store',signal:AbortSignal.timeout(clientConfig.timeoutMs)});
-  const proof=await boundedResponse(res);
+export function verifyExternalAnchorProof({proof,clientConfig,nonce,local}={}){
+  if(!plain(clientConfig)||!plain(local)||
+     !HEX32.test(nonce||'')||!HEX64.test(local.witnessSha256))
+    throw new TypeError('Trusted anchor verification context required');
   exact(proof,['schema','algorithm','keyId','statement','signature'],'anchor attestation');
   exact(proof.statement,['schema','audience','nonce','epoch','witnessSha256',
     'issuedAtMs','expiresAtMs'],'anchor statement');
@@ -259,4 +253,27 @@ export async function assertExternalAnchor({
     throw new TypeError('Local policy/checkpoint disagrees with external anchor floor');
   return {epoch:s.epoch,anchorAttestationSha256:hash(proof),
     signedCheckpointSha256:local.checkpointSha256};
+}
+
+/**
+ * Nonce-bound challenge-response from a separate authority. Each invocation
+ * queries fresh state. If unreachable or mismatching: REFUSE. No cached
+ * 'last known good' fallback and no user-provided endpoint/trust root.
+ */
+export async function assertExternalAnchor({
+  clientConfig,witnessDir,lifecyclePolicy,checkpointTrustConfig
+}={}){
+  if(!plain(clientConfig))throw new TypeError('Host-pinned anchor config required');
+  exact(clientConfig,['endpoint','keyId','key','timeoutMs','maxAgeMs'],'host anchor config');
+  const local=assertSignedTrustCheckpoint({
+    witnessDir,lifecyclePolicy,trustConfig:checkpointTrustConfig
+  });
+  const nonce=randomBytes(16).toString('hex');
+  const endpoint=new URL(clientConfig.endpoint);
+  endpoint.searchParams.set('nonce',nonce);
+  const res=await fetch(endpoint,{method:'GET',redirect:'error',
+    cache:'no-store',signal:AbortSignal.timeout(clientConfig.timeoutMs)});
+  const proof=await boundedResponse(res);
+  return verifyExternalAnchorProof({proof,clientConfig,nonce,local});
+
 }

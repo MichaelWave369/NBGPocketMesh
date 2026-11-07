@@ -296,3 +296,15 @@ npm run demo:anchor
 ```
 
 This is a cross-process **localhost prototype**, NOT an actually off-host authority, secure remote HTTPS transport, immutable monotonic counter, host-level privilege isolation, or production permission to run real PhiOS work. All tracks remain reviewed synthetic network fixtures; historical research workers still exist separately.
+
+
+## R12 · Mutual TLS and pinned trust-authority transport
+
+[R12 mTLS protocol, provisioning and limits](docs/POCKET_MTLS_ANCHOR_R12.md). A new additive one-shot worker replaces R11's cleartext loopback query with **TLS 1.3 mutual certificate authentication** and an operator-pinned server leaf certificate fingerprint, while retaining the independently signed, nonce-bound R11 policy-epoch attestation. Missing/untrusted client certs, invalid server chain/SAN/pin, HTTP downgrade, replayed challenges, redirects and unavailable authority fail closed.
+
+```sh
+npm test
+npm run demo:mtls
+```
+
+The demo generates ephemeral CA/server/client certificates through OpenSSL, runs an HTTPS authority on loopback, performs one built-in synthetic network-health album and verifies that rolling back the entire local R8/R9/R10 trust bundle is refused when the independent authority remembers the newer epoch. **The TLS client private key is accessible to the execution process** for transport authentication. Application signer private keys remain outside it. This does **not** deploy the authority off-host, create an immutable monotonic trust root, harden OS privileges, or authorize real PhiOS effects.
