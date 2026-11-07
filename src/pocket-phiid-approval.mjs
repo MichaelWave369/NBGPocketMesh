@@ -25,6 +25,10 @@ export const AUTHORIZED_RECEIPT_SCHEMA='NBGPocketMesh.PhiIDAuthorizedReceipt.v0'
 export const APPROVAL_AUDIENCE='NBGPocketMesh.local-signed-executor.v0';
 export const APPROVAL_PURPOSE='execute-reviewed-pocket-album';
 export const APPROVAL_SCOPE='pocket.album.execute';
+// Exactly PhiID's verified, localhost-only Keycloak R1/R4 development issuer.
+// Other insecure HTTP issuers are NEVER accepted. Operator approval policy
+// must still pin the exact issuer/subject, and both signatures remain required.
+export const PHIID_LOOPBACK_DEV_ISSUER='http://127.0.0.1:8080/realms/phiid-dev';
 export const MAX_APPROVAL_LIFETIME_MS=60_000;
 
 const isPlain=v=>v!==null&&typeof v==='object'&&!Array.isArray(v)&&Object.getPrototypeOf(v)===Object.prototype;
@@ -47,8 +51,18 @@ const integer=(v,min,max)=>Number.isSafeInteger(v)&&v>=min&&v<=max;
 const principalAllowed=(subject,list)=>list.some(p=>p.iss===subject.iss&&p.sub===subject.sub);
 function validateSubject(subject){
   exact(subject,['iss','sub'],'OIDC-shaped subject');
-  if(typeof subject.iss!=='string'||subject.iss.length>256||
-     !/^https:\/\/[a-z0-9][a-z0-9.-]+(?::[0-9]+)?(?:\/[a-zA-Z0-9._~!$&'()*+,;=:@%-]*)*$/.test(subject.iss)||
+  if(typeof subject.iss!=='string'||subject.iss.length>256)
+    throw new TypeError('Invalid declared issuer/subject shape');
+  // A strict HTTPS URL is accepted, or PhiID's SINGLE exact localhost
+  // Keycloak development issuer. All other cleartext issuers are rejected.
+  let secureIssuer=false;
+  try {
+    const url=new URL(subject.iss);
+    secureIssuer=url.protocol==='https:'&&url.username===''&&url.password===''&&
+      url.search===''&&url.hash===''&&url.href===subject.iss&&
+      /^[a-z0-9][a-z0-9.-]*$/.test(url.hostname);
+  } catch { /* invalid URL, not an acceptable secure issuer */ }
+  if(!(secureIssuer||subject.iss===PHIID_LOOPBACK_DEV_ISSUER)||
      typeof subject.sub!=='string'||subject.sub.length<1||subject.sub.length>128||
      /[\x00-\x1f\x7f]/.test(subject.sub))
     throw new TypeError('Invalid declared issuer/subject shape');

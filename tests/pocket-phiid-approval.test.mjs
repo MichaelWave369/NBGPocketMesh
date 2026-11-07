@@ -11,7 +11,7 @@ import {prepareExecutionRequest,signExecutionRequest} from '../src/pocket-signed
 import {CONFIG_SCHEMA} from '../src/pocket-executor-protocol.mjs';
 import {
   APPROVAL_SCHEMA,APPROVAL_POLICY_SCHEMA,APPROVAL_AUDIENCE,
-  APPROVAL_SCOPE,AUTHORIZED_REQUEST_SCHEMA,
+  APPROVAL_SCOPE,AUTHORIZED_REQUEST_SCHEMA,PHIID_LOOPBACK_DEV_ISSUER,
   signPhiIDApproval,loadPhiIDApprovalPolicy,verifyPhiIDApproval
 } from '../src/pocket-phiid-approval.mjs';
 
@@ -268,5 +268,42 @@ test('approval helper signs a narrow declared protocol, not an OIDC access token
     const verified=verifyPhiIDApproval({permit:x.permit,approval:x.approval,
       policy,executorTrustRoots:execRoots});
     assert.match(verified.principalSha256,/^[a-f0-9]{64}$/);
+  });
+});
+
+test('exact pinned PhiID Keycloak loopback development issuer can pass two-signer gate',async()=>{
+  const local={iss:PHIID_LOOPBACK_DEV_ISSUER,sub:'keycloak-disposable-user-uuid'};
+  await withFixture(async f=>{
+    const envelope=await make(f,{subject:local});
+    assert.equal(envelope.approval.statement.subject.iss,PHIID_LOOPBACK_DEV_ISSUER);
+    const result=await invoke(f,envelope);
+    assert.equal(result.response.status,'PERFORM');
+    assert.equal(readdirSync(f.ledgerDir).length,1);
+  },{allowedSubjects:[local]});
+});
+test('no other HTTP issuer, port, alias or origin may masquerade as local PhiID',async()=>{
+  const others=[
+    'http://localhost:8080/realms/phiid-dev',
+    'http://127.0.0.1:8081/realms/phiid-dev',
+    'http://127.0.0.1:8080/realms/other',
+    'http://127.0.0.1:8080/realms/phiid-dev/',
+    'http://evil.example.invalid/realms/phiid-dev',
+    'http://127.0.0.1:8080/realms/phiid-dev?redirect=evil'
+  ];
+  await withFixture(async f=>{
+    for(const iss of others){
+      await assert.rejects(()=>make(f,{subject:{iss,sub:'synthetic-test-user'}}),
+        /Invalid declared issuer\/subject shape/);
+    }
+    assert.equal(readdirSync(f.ledgerDir).length,0);
+  });
+});
+test('pinned dev issuer is still rejected if the operator did not allow that subject',async()=>{
+  const local={iss:PHIID_LOOPBACK_DEV_ISSUER,sub:'keycloak-someone-else'};
+  await withFixture(async f=>{
+    const envelope=await make(f,{subject:local});
+    const denied=await invoke(f,envelope);
+    assert.equal(denied.response.status,'REFUSE');
+    assert.equal(readdirSync(f.ledgerDir).length,0);
   });
 });
