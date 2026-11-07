@@ -25,6 +25,13 @@ try{
   const lifecyclePolicy=loadTrustLifecyclePolicy(process.argv[4]);
   const witnessDir=process.argv[5];
   const trustConfig=loadCheckpointTrustConfig(process.argv[6]);
+  const signerSpki=trustConfig.key.export({format:'der',type:'spki'}).toString('hex');
+  const otherRoots=[
+    ...Object.values(executorConfig.trustedKeys),
+    ...Object.values(approvalPolicy.trustedApprovers)
+  ];
+  if(otherRoots.some(k=>k.export({format:'der',type:'spki'}).toString('hex')===signerSpki))
+    throw new TypeError('Checkpoint signer must be independent of execution and approval signers');
   const envelope=await readRequest();
   const result=await executeTrustLifecycleRequest(envelope,{
     executorConfig,approvalPolicy,lifecyclePolicy,
