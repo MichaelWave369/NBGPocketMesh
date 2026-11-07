@@ -322,3 +322,17 @@ npm run demo:remote
 ```
 
 The demo uses disposable test certificates on **one machine**; no production device, cloud action or live PhiOS permission is granted. The authority history, TLS client access policy and executor continuity are **ordinary local protected files, not cryptographically immutable monotonic storage**. A separately administered host, tested firewall policy, independent key custody, certificate lifecycle, and least-privilege sandbox remain necessary.
+
+
+## R14 · Isolated-container trust acceptance (separate CI job)
+
+[R14 reproducible lab and security limits](docs/POCKET_TWO_CONTAINER_R14.md). The new **Docker Compose acceptance job** runs a read-only mTLS trust authority as Linux UID 10001 and separate one-shot executor snapshots as UID 10002, on a private internal Docker network with no published ports. The authority's signing key and epoch history are not mounted into the executor. An operator-only, network-disabled helper can promote the authority's epoch or revoke an individual TLS client certificate.
+
+The test verifies independently signed **epoch agreement across containers**, a complete restored old local policy/witness/checkpoint being refused after the authority has moved forward, one-use permit replay refusal, outage refusal, restart recovery and client-certificate revocation. It checks the R8 audit and R13 continuity evidence. All keys, private CA certificates, and fixture state are disposable; no real network resources or PhiOS effects are accessed.
+
+```sh
+npm test
+npm run demo:two-container  # requires Docker Compose v2, OpenSSL and Node 22+
+```
+
+**Boundary:** containers have separate runtime UIDs and mounts but share **one Docker daemon, kernel and administrator**. Passing R14 does *not* prove a real two-physical-host rollout, hardware-backed monotonic state, independent admin authority, production PKI, or safe arbitrary-code execution. The sample R13 systemd deployment remains an unexecuted reference, not a deployed service.
