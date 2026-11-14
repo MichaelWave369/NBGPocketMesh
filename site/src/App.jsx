@@ -9,6 +9,7 @@ import ResilienceLab from './ResilienceLab.jsx';
 import HeterogeneousResilience from './HeterogeneousResilience.jsx';
 import ResilienceCohort from './ResilienceCohort.jsx';
 import IrregularStressLab from './IrregularStressLab.jsx';
+import BridgeFailoverLab from './BridgeFailoverLab.jsx';
 
 const REPO = 'https://github.com/MichaelWave369/NBGPocketMesh';
 const RESEARCH = REPO + '/blob/main/docs/E2A_PROTOCOL.md';
@@ -377,7 +378,7 @@ export default function App() {
   return <div className="site">
     <header className="site-header"><div className="page-wrap header-inner">
       <a href="#top" className="brand" aria-label="PocketMesh homepage"><BrandMark/><span className="brand-word">POCKET<span>MESH</span><small>BY THE Φ FIELD LAB</small></span></a>
-      <nav className="header-nav" aria-label="Primary navigation"><a href="#lab">The lab</a><a href="#evidence">Evidence</a><a href="#precision">Precision</a><a href="#patterns">Patterns</a><a href="#topology">Topology</a><a href="#resilience">Resilience</a><a href="#heterogeneous">Heterogeneous</a><a href="#cohort">Cohort</a><a href="#irregular">Irregular</a><a href="#architecture">Architecture</a></nav>
+      <nav className="header-nav" aria-label="Primary navigation"><a href="#lab">The lab</a><a href="#evidence">Evidence</a><a href="#precision">Precision</a><a href="#patterns">Patterns</a><a href="#topology">Topology</a><a href="#resilience">Resilience</a><a href="#heterogeneous">Heterogeneous</a><a href="#cohort">Cohort</a><a href="#irregular">Irregular</a><a href="#failover">Failover</a><a href="#architecture">Architecture</a></nav>
       <a className="header-github" href={REPO} target="_blank" rel="noreferrer"><Github size={17}/> <span>GITHUB</span> <ArrowUpRight size={15}/></a>
     </div></header>
     <main id="top">
@@ -409,6 +410,7 @@ export default function App() {
       <HeterogeneousResilience/>
       <ResilienceCohort/>
       <IrregularStressLab/>
+      <BridgeFailoverLab/>
       <Architecture/>
     </main>
     <footer className="site-footer"><div className="page-wrap footer-inner"><div className="footer-brand"><BrandMark small/><span>POCKETMESH</span><small>Nested Bubble Gear · Research console</small></div><div className="footer-links"><a href={REPO} target="_blank" rel="noreferrer"><Github size={16}/> Source</a><a href={RESEARCH} target="_blank" rel="noreferrer"><BookOpen size={16}/> Protocol</a><a href={REPO+'/blob/main/LICENSE'} target="_blank" rel="noreferrer">MIT license <ExternalLink size={14}/></a></div><div className="footer-fine">LEDGER ABOVE EGO. RESULTS ABOVE HYPE.<br/>Synthetic experiment · No real model weights served.</div></div></footer>
