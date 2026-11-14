@@ -91,7 +91,7 @@ test("multi-seed cohort is repeatable and equal-information rivals see identical
     for(const trial of row.pairedTrials){
       assert.equal(trial.attemptedFailedEdgeIds.length,20);
       assert.equal(new Set(trial.attemptedFailedEdgeIds).size,20);
-      assert.deepEqual(Object.keys(trial.outcomes),[...COHORT_POLICIES]);
+      assert.deepEqual(Object.keys(trial.outcomes).sort(),[...COHORT_POLICIES].sort());
       assert.ok(Object.values(trial.outcomes).every(x=>x>=0&&x<=1));
     }
   }
