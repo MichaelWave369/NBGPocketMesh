@@ -346,6 +346,6 @@ A new **Heterogeneous** React section and reproducible CLI compare six preselect
 
 The policies are topology-plus-risk, demand exposure only, risk only, capacity-times-risk, seeded random and an unprotected zero-budget reference. Equal maximum **cost ceilings**, rather than equal protected-edge counts or exact spend, are documented. For every paired trial, all strategies receive the exact same attempted risk-weighted link failures; no strategy sees failures before choosing links.
 
-Run npm test, npm run demo:e2r2, npm run test --prefix site and npm run build --prefix site. Read the [frozen E2-R2 protocol](docs/E2R2_HETEROGENEOUS_RESILIENCE.md).
+Run npm test, npm run demo:e2r2, npm run test --prefix site and npm run build --prefix site. Read the [frozen E2-R2 protocol](docs/E2R2_HETEROGENEOUS_RESILIENCE.md). See the [first frozen results ledger](docs/E2R2_FROZEN_RESULTS.md), where topology × risk led only one of the four synthetic families.
 
 **EVIDENCE BOUNDARY:** offline, deterministic, classical graph research. No verified real network performance, physical link reliability, quantum state topology, live E0 routing, permissions, private data or model inference. E2-R1 and execution/trust boundaries remain untouched.
