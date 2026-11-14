@@ -1,0 +1,34 @@
+.resilience-section{padding-block:80px 70px}
+.resilience-heading>span{color:#78e8d9;letter-spacing:1.3px}
+.resilience-heading h2{font-size:clamp(30px,3.3vw,45px);letter-spacing:-1.5px;margin:10px 0}
+.resilience-heading h2 em{font-family:Georgia,serif;color:#a9cbeb;font-weight:400}
+.resilience-heading p{max-width:850px;color:#adc0d5;font-size:14px;line-height:1.7}
+.resilience-notice{display:flex;align-items:flex-start;gap:12px;padding:15px;border:1px solid #80694d;background:#44382230;border-radius:10px;color:#dfcdaa;font-size:12px;line-height:1.65;margin:20px 0}
+.resilience-notice svg{flex-shrink:0}
+.resilience-layout{display:grid;grid-template-columns:minmax(230px,330px) minmax(0,1fr);gap:16px}
+.resilience-controls,.resilience-results{background:#0e1b2b;border:1px solid #32495e;border-radius:12px;padding:20px}
+.resilience-controls h3,.resilience-summary-head h3{display:flex;align-items:center;gap:9px;font-size:17px;margin:0 0 18px}
+.resilience-controls label{display:flex;flex-direction:column;gap:7px;color:#c5d5e5;font-size:12px;margin-bottom:14px}
+.resilience-controls select,.resilience-controls input{width:100%;background:#101d32;color:#e5f0f8;border:1px solid #436079;padding:10px;border-radius:6px}
+.resilience-run,.resilience-export{display:flex;align-items:center;justify-content:center;gap:9px;border:1px solid #6caeb9;background:#174c58;color:#e5fffb;border-radius:7px;padding:12px 15px;font-size:12px;width:100%}
+.resilience-controls p,.resilience-footnote{font-size:11px;color:#88a4b8;line-height:1.65;margin-top:14px}
+.resilience-error{color:#ffb1b8!important}
+.resilience-empty{height:100%;min-height:340px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:18px;text-align:center;color:#8eaac1}
+.resilience-empty strong{font-size:17px;color:#d2eff1}
+.resilience-empty span{max-width:360px;font-size:12px;line-height:1.7}
+.resilience-summary-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.resilience-summary-head h3{margin:0}.resilience-summary-head>span{font-size:11px;color:#8fb4c3}
+.resilience-subtitle{font-size:12px;line-height:1.7;color:#a7bdc9;margin:12px 0 22px}
+.resilience-subtitle strong{color:#ddf0ea}
+.resilience-bars{display:flex;flex-direction:column;gap:20px}
+.resilience-bar-caption,.resilience-bar-meta{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.resilience-bar-caption{font-size:12px;color:#e0f3f0}.resilience-bar-caption span{color:#9cedd7;font-variant-numeric:tabular-nums}
+.resilience-track{height:11px;border-radius:30px;background:#263d51;overflow:hidden;margin:10px 0 7px}
+.resilience-track i{display:block;height:100%;background:#75dcca;border-radius:30px}
+.resilience-bar-meta{font-size:10px;color:#8bacc1}
+.resilience-deltas{display:flex;flex-direction:column;gap:9px;margin:25px 0;border-top:1px solid #30495e;padding-top:18px;color:#bed3df;font-size:12px}
+.resilience-deltas strong{font-size:13px;color:#e5f4f1}
+.resilience-deltas b{font-variant-numeric:tabular-nums;color:#a5ebd9}
+.resilience-deltas small{font-size:10px;color:#88a6b9;line-height:1.6}
+.resilience-export{width:auto;margin-top:12px}
+@media(max-width:880px){.resilience-layout{grid-template-columns:1fr}}
