@@ -15,7 +15,7 @@ Reuse E2-T's A/B 47-node eight-regular 188-edge undirected circulant graphs:
 - A offsets ±1, ±2, ±3, ±4;
 - B offsets ±1, ±2, ±3, ±5.
 
-For every edge, a deterministic hash of the fixture seed and original endpoint IDs generates five original fields:
+For every edge, a deterministic hash of the fixture seed and original endpoint IDs generates four heterogeneous numerical fields:
 - latency 1..7 arbitrary hop-delay units;
 - capacity 2..9 whole flow units;
 - protectionCost 1..4 abstract expense units;
