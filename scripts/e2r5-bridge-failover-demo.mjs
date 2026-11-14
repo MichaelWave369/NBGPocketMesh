@@ -12,7 +12,7 @@ const ledger={
   frozen:report.settings,
   scenarios:report.scenarios.map(s=>({
     family:s.family,outage:s.outage,primaryMetric:s.primaryMetric,
-    leader:s.leader,allFundedExactSpend:s.allFundedExactSpend,
+    leader:s.leader,leaders:s.leaders,allFundedExactSpend:s.allFundedExactSpend,
     bridges:s.seedRows.map(r=>r.bridgeAnalysis.bridges.map(b=>b.id)),
     meanServiceByPolicy:Object.fromEntries(Object.entries(s.byPolicy).map(([p,x])=>
       [p,Object.fromEntries(Object.entries(x).map(([mode,stats])=>[mode,{
