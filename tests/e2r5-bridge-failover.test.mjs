@@ -65,6 +65,11 @@ test("paired bridge-targeted and nonbridge control outages preserve authority bo
     assert.equal(scenario.seedRows.length,2);
     assert.equal(scenario.allFundedExactSpend,true);
     assert.ok(FAILOVER_POLICIES.includes(scenario.leader));
+    assert.ok(Array.isArray(scenario.leaders)&&scenario.leaders.includes(scenario.leader));
+    if(scenario.family==="preferential"){
+      assert.equal(scenario.primaryMetric,"meanServedFraction");
+      assert.equal(scenario.byPolicy.unprotected.full.meanCriticalServedFraction,null);
+    }
     assert.notEqual(scenario.leader,"unprotected");
     assert.deepEqual(Object.keys(scenario.byPolicy),[...FAILOVER_POLICIES]);
     for(const row of scenario.seedRows){
