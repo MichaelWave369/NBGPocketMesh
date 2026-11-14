@@ -349,3 +349,14 @@ The policies are topology-plus-risk, demand exposure only, risk only, capacity-t
 Run npm test, npm run demo:e2r2, npm run test --prefix site and npm run build --prefix site. Read the [frozen E2-R2 protocol](docs/E2R2_HETEROGENEOUS_RESILIENCE.md). See the [first frozen results ledger](docs/E2R2_FROZEN_RESULTS.md), where topology × risk led only one of the four synthetic families.
 
 **EVIDENCE BOUNDARY:** offline, deterministic, classical graph research. No verified real network performance, physical link reliability, quantum state topology, live E0 routing, permissions, private data or model inference. E2-R1 and execution/trust boundaries remain untouched.
+
+
+## E2-R3 · Multi-seed, matched-information resilience cohort
+
+Adds a read-only, entirely synthetic **Cohort** panel and reproducible CLI. E2-R3 challenges E2-R2's topology × risk protection policy using two *matched-information* alternatives (additive and harmonic combinations of the same baseline demand exposure, declared hazard and cost) alongside existing weaker and zero-budget controls. It varies deterministic graph/traffic seeds and runs identical paired outage attempts for all policies. Results include per-seed differences, equal-cost-spend audits, transparent losses and descriptive bootstrap intervals clustered by synthetic fixture seed, not outage repetitions.
+
+The frozen CLI runs **8 fixture seeds × 8 outage trials × 4 graph/outage families = 256 paired simulated failure scenarios**, comparing eight strategies, under identical 24-unit cost ceilings. These are not 256 independent real networks. The site defaults to fewer seeds for responsive local exploration; it exports complete JSON records and never uploads data.
+
+Run npm test and npm run demo:e2r3, or the React Cohort panel. See [E2-R3 methods and limitations](docs/E2R3_MULTI_SEED_COHORT.md).
+
+**No production authorization or performance claim:** origin SIMULATED / action ANALYZE_ONLY / authority NONE. No changes to E0 routing, signed trust gates or actual network protection.
