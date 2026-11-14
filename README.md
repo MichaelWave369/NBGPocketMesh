@@ -357,6 +357,6 @@ Adds a read-only, entirely synthetic **Cohort** panel and reproducible CLI. E2-R
 
 The frozen CLI runs **8 fixture seeds × 8 outage trials × 4 graph/outage families = 256 paired simulated failure scenarios**, comparing eight strategies, under identical 24-unit cost ceilings. These are not 256 independent real networks. The site defaults to fewer seeds for responsive local exploration; it exports complete JSON records and never uploads data.
 
-Run npm test and npm run demo:e2r3, or the React Cohort panel. See [E2-R3 methods and limitations](docs/E2R3_MULTI_SEED_COHORT.md).
+Run npm test and npm run demo:e2r3, or the React Cohort panel. See [E2-R3 methods and limitations](docs/E2R3_MULTI_SEED_COHORT.md). The [frozen eight-seed results ledger](docs/E2R3_FROZEN_RESULTS.md) records where topology × risk led and where simpler matched-information policies beat it.
 
 **No production authorization or performance claim:** origin SIMULATED / action ANALYZE_ONLY / authority NONE. No changes to E0 routing, signed trust gates or actual network protection.
