@@ -331,3 +331,10 @@ A new read-only, dependency-free graph module in site/src/topology-keyhole.js, r
 Run npm test and npm run demo:e2t. Site: npm run test --prefix site and npm run build --prefix site. Documentation: [E2-T Topological Keyhole R1](docs/E2T_TOPOLOGICAL_KEYHOLE_R1.md).
 
 **Boundary:** all results SIMULATED, read-only and authority NONE. These classical graph invariants are not the 48-dimensional quantum OAM invariants, proofs of isomorphism, authentication, real network measurements, neural inference improvements or routing permissions. The earlier Φ47 research receipt and signed execution gates are unmodified.
+
+
+## E2-R · Link Resilience (synthetic protection experiment)
+
+The new interactive **Resilience** section and local Node demo compare three equally budgeted synthetic link-protection policies: shortest-path edge-betweenness, endpoint degree and seeded random. A fourth unprotected fixture is a separate zero-budget reference. All policies face the same frozen, seeded uniform or region-localized attempted edge failures. The study reports reachable vertex pairs and penalized average shortest-path inflation (47-hop penalty for disconnected pairs), including losses or ties for topology. There is **no prediction of actual network reliability**, live routing or measured efficiency.
+
+Run npm test and npm run demo:e2r, or use the React Resilience section. Full methods: [E2-R frozen protocol](docs/E2R_LINK_RESILIENCE_R1.md). Evidence classification: SIMULATED / ANALYZE_ONLY / authority NONE. The E0 router, Φ47 research boundary and signed execution gates are not modified.

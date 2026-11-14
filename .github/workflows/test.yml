@@ -18,6 +18,7 @@ jobs:
       - run: npm run demo:e2k
       - run: npm run demo:e2kb
       - run: npm run demo:e2t
+      - run: npm run demo:e2r
       - run: npm run demo:album
       - run: npm run demo:library
       - run: npm run demo:bridge
