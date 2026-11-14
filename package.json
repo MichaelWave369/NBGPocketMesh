@@ -16,6 +16,7 @@
     "demo:e2r": "node scripts/e2r-resilience-demo.mjs",
     "demo:e2r2": "node scripts/e2r2-heterogeneous-demo.mjs",
     "demo:e2r3": "node scripts/e2r3-cohort-demo.mjs",
+    "demo:e2r4": "node scripts/e2r4-irregular-demo.mjs",
     "demo:album": "node scripts/pocket-album-demo.mjs",
     "demo:library": "node scripts/pocket-library-demo.mjs",
     "demo:bridge": "node scripts/pocket-e0-bridge-demo.mjs",
