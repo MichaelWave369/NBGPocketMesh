@@ -141,7 +141,7 @@ export default function BridgeFailoverLab(){
               })}
             </div>
             <div className="failover-interpretation">
-              <strong>Best funded policy using full reallocation: {labels[scenario.leader]}</strong>
+              <strong>{scenario.leaders.length>1?"Joint top funded strategies":"Top funded strategy"} using full reallocation: {scenario.leaders.map(p=>labels[p]).join(", ")}</strong>
               <p>{scenario.outage==="bridge_attack"
                 ?"A predeclared graph bridge is deliberately targeted here. Protecting cut edges is expected to help by construction; the nonbridge control checks whether that advantage disappears."
                 :sample.bridgeAnalysis.bridges.length>0
