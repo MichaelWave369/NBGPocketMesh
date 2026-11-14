@@ -338,3 +338,14 @@ Run npm test and npm run demo:e2t. Site: npm run test --prefix site and npm run 
 The new interactive **Resilience** section and local Node demo compare three equally budgeted synthetic link-protection policies: shortest-path edge-betweenness, endpoint degree and seeded random. A fourth unprotected fixture is a separate zero-budget reference. All policies face the same frozen, seeded uniform or region-localized attempted edge failures. The study reports reachable vertex pairs and penalized average shortest-path inflation (47-hop penalty for disconnected pairs), including losses or ties for topology. There is **no prediction of actual network reliability**, live routing or measured efficiency.
 
 Run npm test and npm run demo:e2r, or use the React Resilience section. Full methods: [E2-R frozen protocol](docs/E2R_LINK_RESILIENCE_R1.md). Evidence classification: SIMULATED / ANALYZE_ONLY / authority NONE. The E0 router, Φ47 research boundary and signed execution gates are not modified.
+
+
+## E2-R2 · Heterogeneous Resilience (synthetic traffic stress lab)
+
+A new **Heterogeneous** React section and reproducible CLI compare six preselected protection policies on two synthetic 47-node networks with varying link capacities, latency units, protection costs and relative hazard weights. Ninety-four directed traffic demands use deterministic capacity-feasible shortest-latency routes. Primary metric is the fraction of requested flow units served; a separately marked 100-unit failure penalty informs the secondary delay score.
+
+The policies are topology-plus-risk, demand exposure only, risk only, capacity-times-risk, seeded random and an unprotected zero-budget reference. Equal maximum **cost ceilings**, rather than equal protected-edge counts or exact spend, are documented. For every paired trial, all strategies receive the exact same attempted risk-weighted link failures; no strategy sees failures before choosing links.
+
+Run npm test, npm run demo:e2r2, npm run test --prefix site and npm run build --prefix site. Read the [frozen E2-R2 protocol](docs/E2R2_HETEROGENEOUS_RESILIENCE.md). See the [first frozen results ledger](docs/E2R2_FROZEN_RESULTS.md), where topology × risk led only one of the four synthetic families.
+
+**EVIDENCE BOUNDARY:** offline, deterministic, classical graph research. No verified real network performance, physical link reliability, quantum state topology, live E0 routing, permissions, private data or model inference. E2-R1 and execution/trust boundaries remain untouched.
