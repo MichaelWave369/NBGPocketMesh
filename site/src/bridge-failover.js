@@ -258,8 +258,13 @@ function attemptedFailures(fixture,analysis,outage,seed,count){
   return [target,...weightedSample(nonbridges,seed,count-1)].sort();
 }
 function aggregate(seedRows,policy,mode,field){
-  const values=seedRows.map(row=>average(row.trials.map(t=>
-    t.outcomes[policy][mode][field])));
+  const values=seedRows.map(row=>{
+    const perTrial=row.trials.map(t=>t.outcomes[policy][mode][field]);
+    // Absent bridge-dependent demand means UNDEFINED, not a numeric zero.
+    // Never coerce null into 0 via JavaScript addition before checking.
+    if(perTrial.some(v=>v===null||!Number.isFinite(v)))return null;
+    return average(perTrial);
+  });
   if(values.some(v=>v===null||!Number.isFinite(v)))return null;
   return average(values);
 }
@@ -329,11 +334,12 @@ export function runBridgeFailover({
     const criticalTotal=seedRows.reduce((total,row)=>
       total+row.bridgeAnalysis.totalCriticalUnits,0);
     const primary=criticalTotal>0?"meanCriticalServedFraction":"meanServedFraction";
-    const leader=FAILOVER_POLICIES.filter(p=>p!=="unprotected")
-      .sort((a,b)=>byPolicy[b].full[primary]-byPolicy[a].full[primary]||
-        a.localeCompare(b))[0];
+    const funded=FAILOVER_POLICIES.filter(p=>p!=="unprotected");
+    const best=Math.max(...funded.map(p=>byPolicy[p].full[primary]));
+    const leaders=funded.filter(p=>Math.abs(byPolicy[p].full[primary]-best)<=1e-12);
+    const leader=leaders[0];
     scenarios.push({
-      family,outage,primaryMetric:primary,leader,
+      family,outage,primaryMetric:primary,leader,leaders,
       allFundedExactSpend:seedRows.every(row=>row.trials.every(t=>
         FAILOVER_POLICIES.filter(p=>p!=="unprotected")
           .every(p=>t.outcomes[p].protectionSpent===budget))),
