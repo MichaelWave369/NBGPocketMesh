@@ -249,3 +249,42 @@ export function scoreProtectedTrial({
   return {...result,remainingFailedEdges:remaining.length,
     protectedFailureAttempts:attemptedFailedEdgeIds.length-remaining.length};
 }
+
+
+// E2-R4 additive adapter: evaluate a strictly bounded, explicitly synthetic
+// external fixture using the same greedy capacity-aware E2-R2 traffic engine.
+// This NEVER changes E2-R2 fixtures, E0 routing, network state, or permissions.
+export function evaluateIrregularSyntheticFixture(fixture,failedEdgeIds=[],recordExposure=false){
+  if(!fixture||fixture.schema!=="NBGPocketMesh.E2R4.IrregularFixture.v1"||
+    fixture.origin!=="SIMULATED"||fixture.authority!=="NONE"||
+    fixture.nodes!==47||!Array.isArray(fixture.edges)||
+    fixture.edges.length<46||fixture.edges.length>250||
+    !Array.isArray(fixture.demands)||fixture.demands.length!==94||
+    typeof recordExposure!=="boolean"||
+    !Array.isArray(failedEdgeIds)||failedEdgeIds.length>fixture.edges.length)
+    throw new TypeError("Invalid or unauthorized synthetic irregular fixture.");
+  const known=new Set();
+  for(const e of fixture.edges){
+    if(!e||!Number.isSafeInteger(e.a)||!Number.isSafeInteger(e.b)||
+       e.a<0||e.b<0||e.a>=47||e.b>=47||e.a===e.b||
+       e.id!==edgeId(e.a,e.b)||known.has(e.id)||
+       ![e.latency,e.capacity,e.protectionCost,e.riskWeight].every(Number.isFinite)||
+       e.latency<1||e.latency>7||e.capacity<2||e.capacity>9||
+       e.protectionCost<1||e.protectionCost>4||e.riskWeight<1||e.riskWeight>9)
+      throw new TypeError("Invalid synthetic irregular edge.");
+    known.add(e.id);
+  }
+  for(const d of fixture.demands){
+    if(!d||!Number.isInteger(d.from)||!Number.isInteger(d.to)||
+       d.from<0||d.to<0||d.from>=47||d.to>=47||d.from===d.to||
+       !Number.isInteger(d.units)||d.units<1||d.units>3)
+      throw new TypeError("Invalid synthetic irregular demand.");
+  }
+  if(failedEdgeIds.some(id=>!known.has(id))||
+     new Set(failedEdgeIds).size!==failedEdgeIds.length)
+    throw new TypeError("Invalid duplicate or unknown failure edge ID.");
+  const m=routeDemand(fixture,new Set(failedEdgeIds),recordExposure);
+  if(recordExposure)m.exposure=Object.fromEntries(m.exposure);
+  else delete m.exposure;
+  return m;
+}
