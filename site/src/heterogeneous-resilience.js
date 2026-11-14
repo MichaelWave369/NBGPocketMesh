@@ -222,3 +222,30 @@ export function runHeterogeneousResilience({
     ]
   };
 }
+
+
+// E2-R3 additive, audit-only adapters: preserve E2-R2 behavior and expose
+// deterministic intact traffic exposure / outcomes for frozen policy ablations.
+// They never authorize an action or accept an operator-supplied network.
+export function inspectIntactExposure(graph="A",seed=369){
+  const fixture=heterogeneousFixture(graph,seed);
+  const observed=routeDemand(fixture,new Set(),true);
+  return Object.fromEntries([...observed.exposure.entries()].sort((a,b)=>a[0].localeCompare(b[0])));
+}
+export function scoreProtectedTrial({
+  graph="A",seed=369,attemptedFailedEdgeIds,protectedEdgeIds
+}={}){
+  const fixture=heterogeneousFixture(graph,seed);
+  const allowed=new Set(fixture.edges.map(e=>e.id));
+  const check=ids=>Array.isArray(ids)&&ids.length<=fixture.edges.length&&
+    ids.every(id=>typeof id==="string"&&allowed.has(id))&&
+    new Set(ids).size===ids.length;
+  if(!check(attemptedFailedEdgeIds)||!check(protectedEdgeIds))
+    throw new TypeError("Invalid duplicate, unknown, or unbounded synthetic edge identifiers.");
+  const protectedSet=new Set(protectedEdgeIds);
+  const remaining=attemptedFailedEdgeIds.filter(id=>!protectedSet.has(id));
+  const result=routeDemand(fixture,new Set(remaining));
+  delete result.exposure;
+  return {...result,remainingFailedEdges:remaining.length,
+    protectedFailureAttempts:attemptedFailedEdgeIds.length-remaining.length};
+}
