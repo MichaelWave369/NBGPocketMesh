@@ -18,6 +18,6 @@ test("React page exposes E2-R4 without importing the production router",()=>{
   assert.match(app,/<IrregularStressLab\/>/);
   assert.match(app,/href="#irregular"/);
   assert.match(ui,/READ-ONLY/);
-  assert.match(ui,/exact cost/i);
+  assert.match(ui,/exact protection spend/i);
   assert.doesNotMatch(ui,/(?:import|from)\s+['"][^'"]*(?:\/router|pocket-executor|pocket-anchor)/);
 });
