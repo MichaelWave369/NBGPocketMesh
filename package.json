@@ -14,6 +14,7 @@
     "demo:e2kb": "node scripts/e2kb-demo.mjs",
     "demo:e2t": "node scripts/e2t-topology-demo.mjs",
     "demo:e2r": "node scripts/e2r-resilience-demo.mjs",
+    "demo:e2r2": "node scripts/e2r2-heterogeneous-demo.mjs",
     "demo:album": "node scripts/pocket-album-demo.mjs",
     "demo:library": "node scripts/pocket-library-demo.mjs",
     "demo:bridge": "node scripts/pocket-e0-bridge-demo.mjs",
