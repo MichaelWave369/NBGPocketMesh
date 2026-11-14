@@ -360,3 +360,12 @@ The frozen CLI runs **8 fixture seeds × 8 outage trials × 4 graph/outage famil
 Run npm test and npm run demo:e2r3, or the React Cohort panel. See [E2-R3 methods and limitations](docs/E2R3_MULTI_SEED_COHORT.md). The [frozen eight-seed results ledger](docs/E2R3_FROZEN_RESULTS.md) records where topology × risk led and where simpler matched-information policies beat it.
 
 **No production authorization or performance claim:** origin SIMULATED / action ANALYZE_ONLY / authority NONE. No changes to E0 routing, signed trust gates or actual network protection.
+
+
+## E2-R4 · Irregular graph stress experiments
+
+The new **Irregular** React section and npm run demo:e2r4 challenge protection policies on two newly generated connected, non-regular, 47-node synthetic networks: a hub-skewed preferential-attachment family and three modular ring-like communities with two graph-theoretic bridges. A predeclared 0/1 knapsack enforces **identical exact protection spend** for all eight funded strategies. Every policy sees the same attempted failure IDs per trial. The experiment compares unweighted edge-betweenness × risk against routed traffic exposure × risk, additive/harmonic combinations, degree × risk, capacity × risk, risk-only, seeded random and a separately identified zero-spend reference.
+
+Frozen CLI: **6 synthetic fixture seeds × 6 paired trials × 4 graph/outage families = 144 simulated failure scenarios**. Link capacities, traffic, hazards, costs and outages are synthetic and uncalibrated. Read the [E2-R4 reproducible protocol and limitations](docs/E2R4_IRREGULAR_GRAPH_STRESS.md).
+
+This is a read-only experiment, not production routing, real infrastructure validation, model intelligence, graph identity proof or quantum topology. No E0 behavior or signed trust gates change.
