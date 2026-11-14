@@ -1,0 +1,44 @@
+.failover-section{padding-block:86px 78px}
+.failover-heading .mono{color:#79e2d2;letter-spacing:1.2px}
+.failover-heading h2{font-size:clamp(30px,3.8vw,49px);letter-spacing:-1.4px;margin:10px 0}
+.failover-heading h2 em{font-family:Georgia,serif;font-weight:400;color:#b6b7fa}
+.failover-heading p{max-width:850px;font-size:14px;line-height:1.7;color:#a7bfd2}
+.failover-warning{display:flex;gap:11px;align-items:flex-start;border:1px solid #8d704c;background:#45341e33;border-radius:10px;padding:15px;color:#e0cfad;font-size:12px;line-height:1.7;margin:24px 0}
+.failover-warning svg{flex-shrink:0}
+.failover-layout{display:grid;grid-template-columns:minmax(240px,330px) minmax(0,1fr);gap:17px}
+.failover-controls,.failover-results{background:#0e1c2b;border:1px solid #364e61;border-radius:12px;padding:20px;min-width:0}
+.failover-controls h3,.failover-result-header h3{display:flex;gap:10px;align-items:center;font-size:17px;margin:0 0 17px}
+.failover-controls label{display:flex;flex-direction:column;gap:7px;color:#bfd1dd;font-size:12px;margin-bottom:14px}
+.failover-controls select,.failover-controls input,.failover-mode select{background:#102638;color:#e4f5f8;border:1px solid #4b6980;border-radius:7px;padding:10px;width:100%}
+.failover-run,.failover-export{display:flex;align-items:center;justify-content:center;gap:9px;background:#18505d;color:#edfcf4;border:1px solid #6ea9b4;border-radius:7px;padding:12px 15px;font-size:12px}
+.failover-run{width:100%}.failover-run:disabled{opacity:.55;cursor:progress}
+.failover-controls p,.failover-boundary{font-size:11px;line-height:1.7;color:#8daaba;margin:16px 0 0}
+.failover-error{color:#ffc0c0!important}
+.failover-empty{min-height:340px;height:100%;display:flex;justify-content:center;align-items:center;flex-direction:column;text-align:center;gap:16px;color:#8bacbd}
+.failover-empty strong{color:#e5f2ee;font-size:17px}
+.failover-empty p{max-width:370px;font-size:12px;line-height:1.7}
+.failover-result-header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.failover-result-header h3{margin:0}.failover-result-header span{font-size:11px;color:#92adbd}
+.failover-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:17px 0}
+.failover-tabs button{background:#152e43;border:1px solid #496175;padding:9px 11px;font-size:11px;border-radius:7px;color:#b5d0dc}
+.failover-tabs button.selected{background:#235359;border-color:#83e2d2;color:#f3fcf7}
+.failover-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.failover-cards>div{background:#0c293a;border:1px solid #315468;border-radius:8px;padding:12px}
+.failover-cards span{display:block;color:#a3c2d0;font-size:10px}
+.failover-cards strong{display:block;color:#92e4d8;font-size:22px;font-variant-numeric:tabular-nums;margin-top:8px}
+.failover-mode{display:flex;flex-direction:column;gap:8px;margin:19px 0 10px;font-size:12px;color:#b7d0dc}
+.failover-mode select{max-width:300px}
+.failover-intro{font-size:12px;line-height:1.7;color:#a3baca;margin:18px 0}
+.failover-intro strong{color:#e8f6ef}
+.failover-bars{display:flex;flex-direction:column;gap:17px}
+.failover-policy-heading{display:flex;justify-content:space-between;gap:12px;font-size:12px;color:#d7ede9}
+.failover-policy-heading span{color:#9cebd7;font-variant-numeric:tabular-nums}
+.failover-track{margin:8px 0;height:10px;background:#294556;border-radius:20px;overflow:hidden}
+.failover-track i{display:block;height:100%;border-radius:20px;background:#76dbc9}
+.failover-policy small{font-size:10px;line-height:1.6;color:#8aa8bc}
+.failover-interpretation{margin:23px 0;padding:14px;border:1px solid #3e6267;background:#193841;border-radius:9px}
+.failover-interpretation strong{color:#e0f3ec;font-size:12px}
+.failover-interpretation p{font-size:11px;line-height:1.65;color:#9dbdc2;margin:9px 0 0}
+.failover-export{margin-top:16px}
+@media(max-width:910px){.failover-layout{grid-template-columns:1fr}}
+@media(max-width:560px){.failover-cards{grid-template-columns:1fr}}

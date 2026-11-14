@@ -22,6 +22,7 @@ jobs:
       - run: npm run demo:e2r2
       - run: npm run demo:e2r3
       - run: npm run demo:e2r4
+      - run: npm run demo:e2r5
       - run: npm run demo:album
       - run: npm run demo:library
       - run: npm run demo:bridge
