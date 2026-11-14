@@ -322,3 +322,12 @@ npm run demo:remote
 ```
 
 The demo uses disposable test certificates on **one machine**; no production device, cloud action or live PhiOS permission is granted. The authority history, TLS client access policy and executor continuity are **ordinary local protected files, not cryptographically immutable monotonic storage**. A separately administered host, tested firewall policy, independent key custody, certificate lifecycle, and least-privilege sandbox remain necessary.
+
+
+## E2-T · Topological Keyhole (classical Φ47 graph research)
+
+A new read-only, dependency-free graph module in site/src/topology-keyhole.js, runnable with the offline Node demo and the React site's **Topology** section. Two distinct 47-node, eight-regular networks share 188 edges and graph cycle rank 142 but have different triangle counts (282 versus 235). Measure connected components, four-cycles, triangle-filled clique H1 and bounded weighted filtrations; challenge them with seeded vertex relabeling, degree-preserving edge swaps and dropped connections.
+
+Run npm test and npm run demo:e2t. Site: npm run test --prefix site and npm run build --prefix site. Documentation: [E2-T Topological Keyhole R1](docs/E2T_TOPOLOGICAL_KEYHOLE_R1.md).
+
+**Boundary:** all results SIMULATED, read-only and authority NONE. These classical graph invariants are not the 48-dimensional quantum OAM invariants, proofs of isomorphism, authentication, real network measurements, neural inference improvements or routing permissions. The earlier Φ47 research receipt and signed execution gates are unmodified.
