@@ -369,3 +369,14 @@ The new **Irregular** React section and npm run demo:e2r4 challenge protection p
 Frozen CLI: **6 synthetic fixture seeds × 6 paired trials × 4 graph/outage families = 144 simulated failure scenarios**. Link capacities, traffic, hazards, costs and outages are synthetic and uncalibrated. Read the [E2-R4 reproducible protocol and limitations](docs/E2R4_IRREGULAR_GRAPH_STRESS.md). The [frozen E2-R4 results ledger](docs/E2R4_FROZEN_RESULTS.md) records four scenarios where graph centrality × risk did not lead, along with reproducible spending and bridge diagnostics.
 
 This is a read-only experiment, not production routing, real infrastructure validation, model intelligence, graph identity proof or quantum topology. No E0 behavior or signed trust gates change.
+
+
+## E2-R5 · Bridge-critical demand and failover laboratory
+
+Adds an offline, read-only **Failover** React section and frozen Node benchmark to compare link protection against two genuine graph bridge cuts. A low-link DFS classifies bridge-dependent synthetic traffic, and an exact-cost protection policy targets these cut edges. It compares graph centrality, intact routed-demand exposure, relative hazard and seeded random controls, plus an unprotected zero-cost reference.
+
+Each policy experiences the same attempted failures. For each surviving network, three explicit modes report continuity: **no reroute** (only retain surviving old paths), **repair-only** (preserve unaffected flows and retry interrupted ones), and **full reallocation** (recompute all demands from scratch). Full-recompute service is cross-checked against the original E2-R2 synthetic evaluator. The modular bridge-targeted stress test is deliberately favorable to bridge-aware protection; modular and hub-network **nonbridge controls** are included to expose this bias.
+
+Frozen CLI: **4 synthetic seeds × 4 paired outages × 3 scenario families = 48 synthetic trials**, with 12 attempted link failures and exact 24-unit synthetic spend for every funded policy. Run npm test, npm run demo:e2r5, npm run test --prefix site and npm run build --prefix site. Review [E2-R5 methods and evidence boundaries](docs/E2R5_BRIDGE_FAILOVER.md).
+
+**No real routing, packet loss measurement, hardware failover timing, quantum link, identity verification, or authorization is involved.** E0 and trust mechanisms remain untouched.
