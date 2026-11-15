@@ -127,7 +127,7 @@ export default function MixedPriorityLab(){
          </div>
          <div className="mix-priority-summary">
            <div><span>Exact funded costs</span><strong>{group.exactFundedSpend?"MATCHED":"NOT MATCHED"}</strong></div>
-           <div><span>Recorded outage patterns</span><strong>3 types</strong></div>
+           <div><span>Possible outage subtypes</span><strong>3 types</strong></div>
            <div><span>Funded leader for priority</span><strong>{names[group.leader]}</strong></div>
          </div>
          <div className="mix-priority-display">
