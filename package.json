@@ -20,6 +20,7 @@
     "demo:e2r5": "node scripts/e2r5-bridge-failover-demo.mjs",
     "demo:e2r6": "node scripts/e2r6-mixed-priority-demo.mjs",
     "demo:e2r7": "node scripts/e2r7-service-floors-demo.mjs",
+    "demo:e2r8": "node scripts/e2r8-exact-gap-demo.mjs",
     "demo:album": "node scripts/pocket-album-demo.mjs",
     "demo:library": "node scripts/pocket-library-demo.mjs",
     "demo:bridge": "node scripts/pocket-e0-bridge-demo.mjs",
