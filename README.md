@@ -380,3 +380,14 @@ Each policy experiences the same attempted failures. For each surviving network,
 Frozen CLI: **4 synthetic seeds × 4 paired outages × 3 scenario families = 48 synthetic trials**, with 12 attempted link failures and exact 24-unit synthetic spend for every funded policy. Run npm test, npm run demo:e2r5, npm run test --prefix site and npm run build --prefix site. Review [E2-R5 methods and evidence boundaries](docs/E2R5_BRIDGE_FAILOVER.md). The [E2-R5 frozen results ledger](docs/E2R5_FROZEN_RESULTS.md) records the bridge-attack result, four-way nonbridge tie and hub-network control.
 
 **No real routing, packet loss measurement, hardware failover timing, quantum link, identity verification, or authorization is involved.** E0 and trust mechanisms remain untouched.
+
+
+## E2-R6 · Unknown mixed failures and priority services (synthetic lab)
+
+A new read-only **Mixed Priority** section and frozen CLI compare five exact-cost, preselected link-protection strategies plus an unprotected zero-budget reference. All see the same attempted failures per trial, drawn **after** protection choices from one of three predeclared hidden per-trial subtypes: uniform, relative-risk weighted or synthetic correlated cluster. Two mixture distributions are compared.
+
+A deterministic fixture hash marks some of the 94 simulated traffic demands as priority and the rest standard. Every protection method is evaluated under **original** demand order and **priority-first** demand order using the previously tested E2-R5 synthetic path allocator. The new adapters check that original-order results still match the prior E2-R2 traffic evaluator. The priority-demand exposure and all-demand exposure policies share the exact same frozen baseline route observations, hazard values and protection costs; a bridge-dependent policy, risk-only and seeded random form additional alternatives with different feature access.
+
+Primary outcome: **fraction of priority demand served** under priority-first scheduling. The standard-demand, total-demand, and secondary three-to-one weighted fractions remain explicitly visible, including negative tradeoffs. All funded policies spend the exact same synthetic cost. CLI: **3 fixture seeds × 3 paired outages × 4 graph/mixture families = 36 paired scenarios**. Run npm test, npm run demo:e2r6, npm run test --prefix site and npm run build --prefix site. See [E2-R6 methods](docs/E2R6_MIXED_PRIORITY.md).
+
+Evidence: SIMULATED / ANALYZE_ONLY / authority NONE. No real service level, measured network outcome, security grant, quantum link, hardware packet flow or production E0 routing is involved.
