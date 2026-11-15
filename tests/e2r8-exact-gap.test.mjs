@@ -114,7 +114,7 @@ test("bounded exact checker rejects unauthorized or malformed inputs",()=>{
     {...f,authority:"LIVE"},{...f,origin:"HARDWARE"},
     {...f,nodes:8},{...f,edges:[...f.edges,{...f.edges[0]}]},
     {...f,edges:f.edges.map((e,i)=>i?e:{...e,capacity:0})},
-    {...f,demands:[...f.demands,{id:"duplicate",from:0,to:1,units:1,service:"priority"}]},
+    {...f,demands:[...f.demands,{...f.demands[0]}]},
     {...f,demands:f.demands.map((d,i)=>i?d:{...d,service:"CEO"})}
   ])assert.throws(()=>exactTinyAdmission(bad,[],40),/Invalid/);
   assert.throws(()=>exactTinyAdmission(f,["invented"],40),/Invalid/);
