@@ -2,7 +2,7 @@
 // Standalone public-synthetic, READ-ONLY experiment; never invokes E0 routing.
 import {makeIrregularFixture} from "./irregular-resilience.js";
 import {inspectSyntheticServiceFloor} from "./bridge-failover.js";
-import {runPriorityMix,PRIORITY_POLICIES} from "./mixed-priority.js";
+import {runPriorityMix,PRIORITY_POLICIES,getSyntheticServiceClasses as priorityLabelsForFixture} from "./mixed-priority.js";
 
 export const FLOOR_SCHEMA="NBGPocketMesh.E2R7.StandardFloors.v1";
 export const FLOOR_LEVELS=Object.freeze([0,20,30,40]);
@@ -46,19 +46,10 @@ export function runServiceFloorCohort({
    const seedRows=[];
    for(const oldSeed of source.seedRows){
      const fixture=makeIrregularFixture(source.family,oldSeed.seed);
-     const labels=Object.fromEntries(fixture.demands.map(d=>[d.id,
-       // The E2-R6 classes are frozen by its own policy inspection.
-       // All protection policies refer to precisely this label assignment.
-       null
-     ]));
-     // Avoid rebuilding R6's class hash with a subtly different formula:
-     // expose it through the selected policy plan, which is determined on
-     // intact topology before ANY fault realization.
+     // Reuse the audited E2-R6 labels exactly, without reassignment or tuning.
      const planned=oldSeed.selectedProtection;
-     // The E2-R6 class label map is available via its public plan export.
-     // Retrieve it once using the same validated fixture.
      const classes=priorityLabelsForFixture(fixture);
-     if(Object.keys(classes).length!==Object.keys(labels).length)
+     if(Object.keys(classes).length!==fixture.demands.length)
        throw new Error("Demand label counts diverged.");
      const trialRows=[];
      for(const sourceTrial of oldSeed.trials){
@@ -152,6 +143,3 @@ export function runServiceFloorCohort({
    ]
  };
 }
-// E2-R7 explicitly calls the audited E2-R6 label source rather than
-// independently assigning service classes.
-import {getSyntheticServiceClasses as priorityLabelsForFixture} from "./mixed-priority.js";
