@@ -391,3 +391,14 @@ A deterministic fixture hash marks some of the 94 simulated traffic demands as p
 Primary outcome: **fraction of priority demand served** under priority-first scheduling. The standard-demand, total-demand, and secondary three-to-one weighted fractions remain explicitly visible, including negative tradeoffs. All funded policies spend the exact same synthetic cost. CLI: **3 fixture seeds × 3 paired outages × 4 graph/mixture families = 36 paired scenarios**. Run npm test, npm run demo:e2r6, npm run test --prefix site and npm run build --prefix site. See [E2-R6 methods](docs/E2R6_MIXED_PRIORITY.md). The [E2-R6 frozen results ledger](docs/E2R6_FROZEN_RESULTS.md) records priority gains, standard-class tradeoffs, and cases where our priority-exposure strategy did not lead.
 
 Evidence: SIMULATED / ANALYZE_ONLY / authority NONE. No real service level, measured network outcome, security grant, quantum link, hardware packet flow or production E0 routing is involved.
+
+
+## E2-R7 · Minimum standard-service floor laboratory
+
+The read-only **Service Floors** React section and frozen npm run demo:e2r7 investigate the priority-versus-standard traffic tradeoff found in E2-R6. For each identical paired synthetic outage, five equal-exact-cost link protection policies and a separate zero-cost reference are evaluated under standard-service reservation targets of **0%, 20%, 30%, and 40% of requested standard demand units**.
+
+A three-stage deterministic scheduler reserves standard flows until the requested quota is served or no more standard demands fit, then admits priority flows, then retries unserved standard flows with spare capacity. A minimum standard floor is guaranteed **only when achievable by the identical fixed-order greedy standard-first reference on that failed synthetic fixture**. Each trial records whether the target was attainable in that limited sense, whether met, shortfall units, and priority/standard/total service separately. Greedy unattainability is **not proof of global network infeasibility**. Zero floor is asserted to reproduce E2-R6 priority-first results.
+
+The frozen experiment reuses **3 synthetic fixture seeds × 3 paired failures × 4 graph/mixture families = 36 simulated scenarios** with all methods spending identical exact protection cost. Read the [E2-R7 frozen methods](docs/E2R7_STANDARD_FLOORS.md). Run npm test, npm run demo:e2r7, npm run test --prefix site and npm run build --prefix site.
+
+Evidence: SIMULATED / ANALYZE_ONLY / authority NONE. No real QoS guarantee, measured packet service, optima, authorization, E0 routing, or quantum link is demonstrated.
