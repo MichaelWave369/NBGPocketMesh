@@ -61,7 +61,8 @@ export default function ExactGapLab(){
  const [running,setRunning]=useState(false);
  const [error,setError]=useState("");
  const change=(fn,v)=>{fn(v);setResult(null);setError("");};
- const fixture=makeTinyFixture(fixtureName,seed);
+ const seedValid=Number.isSafeInteger(seed)&&seed>=0&&seed<=0xffffffff;
+ const fixture=makeTinyFixture(fixtureName,seedValid?seed:369);
  const failed=fault==="intact"?[]:[fixture.failureEdge];
  function run(){
    if(running)return;
