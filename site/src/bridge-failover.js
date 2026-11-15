@@ -365,3 +365,25 @@ export function runBridgeFailover({
     ]
   };
 }
+
+
+// E2-R6 additive inspection-only adapter: return deterministic synthetic
+// flow placements for any validated permutation of PREEXISTING demand IDs.
+// It does not alter E2-R5 output, production E0 routing or trust authority.
+export function inspectSyntheticPathAllocation(fixture,failedEdgeIds=[],orderIds=null){
+  evaluateIrregularSyntheticFixture(fixture,failedEdgeIds);
+  const known=new Map(fixture.demands.map(d=>[d.id,d]));
+  if(known.size!==fixture.demands.length)throw new TypeError("Duplicate synthetic demand IDs.");
+  if(orderIds!==null&&(!Array.isArray(orderIds)||orderIds.length!==fixture.demands.length||
+     new Set(orderIds).size!==orderIds.length||
+     orderIds.some(id=>!known.has(id))))
+    throw new TypeError("Demand order must be a full permutation of synthetic demand IDs.");
+  const ordered=orderIds===null?fixture.demands:orderIds.map(id=>known.get(id));
+  const assignments=allocate({...fixture,demands:ordered},new Set(failedEdgeIds));
+  return {
+    schema:"NBGPocketMesh.E2R6.SyntheticPathInspection.v1",
+    origin:"SIMULATED",authority:"NONE",action:"ANALYZE_ONLY",
+    canRoute:false,canExecute:false,canAuthorize:false,
+    assignments
+  };
+}
