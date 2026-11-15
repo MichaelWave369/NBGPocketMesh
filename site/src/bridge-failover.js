@@ -387,3 +387,81 @@ export function inspectSyntheticPathAllocation(fixture,failedEdgeIds=[],orderIds
     assignments
   };
 }
+
+
+// E2-R7: bounded, READ-ONLY standard-service reservation study.
+// A "floor" is guaranteed ONLY when achievable by this fixed-order greedy
+// standard-first allocator on the already-failed *synthetic* network.
+// It is not packet QoS, an optimal scheduler, or a real operational SLA.
+export function inspectSyntheticServiceFloor(
+  fixture,failedEdgeIds=[],classLabels={},floorPercent=30
+){
+  evaluateIrregularSyntheticFixture(fixture,failedEdgeIds);
+  if(!Number.isSafeInteger(floorPercent)||floorPercent<0||floorPercent>70)
+    throw new TypeError("Synthetic standard floor must be integer percent 0..70.");
+  if(!classLabels||typeof classLabels!=="object"||Array.isArray(classLabels))
+    throw new TypeError("Invalid synthetic service class map.");
+  const known=new Set(fixture.demands.map(d=>d.id));
+  const entries=Object.entries(classLabels);
+  if(entries.length!==fixture.demands.length||
+     entries.some(([id,value])=>!known.has(id)||
+       !["priority","standard"].includes(value)))
+    throw new TypeError("Class labels must match all synthetic demand IDs exactly.");
+  const priority=fixture.demands.filter(d=>classLabels[d.id]==="priority");
+  const standard=fixture.demands.filter(d=>classLabels[d.id]==="standard");
+  if(!priority.length||!standard.length)throw new TypeError("Both synthetic service classes required.");
+  const standardRequested=standard.reduce((s,d)=>s+d.units,0);
+  const priorityRequested=priority.reduce((s,d)=>s+d.units,0);
+  const target=Math.ceil(standardRequested*floorPercent/100);
+  const blocked=new Set(failedEdgeIds);
+  const {table,links}=adjacency(fixture,blocked);
+  const linkIndex=new Map(links.map((edge,i)=>[edge.id,i]));
+  // Standard-first potential under EXACT SAME greedy allocator and flow order.
+  // NOT an upper bound on what some other, optimized routing could serve.
+  const greedyStandardFirst=allocate({...fixture,demands:standard},blocked)
+    .reduce((sum,a)=>sum+(a.path?a.units:0),0);
+  const residual=links.map(edge=>edge.capacity),accepted=new Map();
+  const counters={reservedStandard:0,priority:0,finalStandard:0};
+  function admit(d,stage){
+    const found=shortestRoute({table,links},residual,d.from,d.to,d.units);
+    if(!found)return false;
+    for(const id of found.path)residual[linkIndex.get(id)]-=d.units;
+    accepted.set(d.id,{id:d.id,units:d.units,path:found.path,
+      latency:found.latency,stage});
+    counters[stage]+=d.units;
+    return true;
+  }
+  // Reserve the minimum standard flow capacity possible with this fixed-order
+  // greedy strategy before admitting any priority demand.
+  if(target>0)for(const d of standard){
+    if(counters.reservedStandard>=target)break;
+    admit(d,"reservedStandard");
+  }
+  for(const d of priority)admit(d,"priority");
+  // Offer capacity left over after priority to ALL still unserved standard flows.
+  for(const d of standard)if(!accepted.has(d.id))admit(d,"finalStandard");
+  const standardServed=counters.reservedStandard+counters.finalStandard;
+  const priorityServed=counters.priority;
+  const attainableUnderGreedy=greedyStandardFirst>=target;
+  const floorSatisfied=standardServed>=target;
+  if(attainableUnderGreedy&&!floorSatisfied)
+    throw new Error("Synthetic reservation violated attainable greedy floor.");
+  if(floorPercent===0&&counters.reservedStandard!==0)
+    throw new Error("Zero standard floor must not reserve capacity.");
+  return {
+    schema:"NBGPocketMesh.E2R7.SyntheticFloorInspection.v1",
+    origin:"SIMULATED",privacy:"public-synthetic",
+    authority:"NONE",action:"ANALYZE_ONLY",
+    canRoute:false,canExecute:false,canAuthorize:false,
+    floorPercent,targetStandardUnits:target,
+    standardFirstGreedyPotentialUnits:greedyStandardFirst,
+    attainableUnderGreedy,floorSatisfied,
+    shortfallUnits:Math.max(0,target-standardServed),
+    priorityRequested,priorityServed,priorityFraction:priorityServed/priorityRequested,
+    standardRequested,standardServed,standardFraction:standardServed/standardRequested,
+    totalRequested:priorityRequested+standardRequested,
+    totalServed:priorityServed+standardServed,
+    totalFraction:(priorityServed+standardServed)/(priorityRequested+standardRequested),
+    stageServedUnits:counters
+  };
+}
