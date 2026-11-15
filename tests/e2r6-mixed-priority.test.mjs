@@ -28,7 +28,7 @@ test("priority order is a permutation of original 94 synthetic flow IDs",()=>{
    assert.ok(Object.values(labels).includes("priority"));
    assert.ok(Object.values(labels).includes("standard"));
    assert.equal(Object.keys(labels).length,94);
- });
+ }
 });
 test("all policy protection costs are exactly matched, selected before failures",()=>{
  for(const family of ["modular","preferential"]){
