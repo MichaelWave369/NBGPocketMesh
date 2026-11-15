@@ -1,0 +1,44 @@
+.mix-priority-section{padding-block:88px 78px}
+.mix-priority-heading>span{color:#80e4d2;letter-spacing:1.1px}
+.mix-priority-heading h2{font-size:clamp(30px,3.6vw,49px);letter-spacing:-1.2px;margin:10px 0}
+.mix-priority-heading h2 em{font-family:Georgia,serif;font-weight:400;color:#c0b8fb}
+.mix-priority-heading p{font-size:14px;line-height:1.7;color:#a4bfd1;max-width:840px}
+.mix-priority-warning{display:flex;gap:11px;align-items:flex-start;padding:15px;background:#44351c33;border:1px solid #806a4d;color:#e0cda9;font-size:12px;line-height:1.7;border-radius:10px;margin:24px 0}
+.mix-priority-warning svg{flex-shrink:0}
+.mix-priority-layout{display:grid;grid-template-columns:minmax(240px,340px) minmax(0,1fr);gap:17px}
+.mix-priority-controls,.mix-priority-results{background:#101e30;border:1px solid #355063;border-radius:11px;padding:19px;min-width:0}
+.mix-priority-controls h3,.mix-priority-results-head h3{display:flex;align-items:center;gap:9px;font-size:17px;margin:0 0 17px}
+.mix-priority-controls label,.mix-priority-display label{font-size:12px;color:#bcd2df;display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.mix-priority-controls select,.mix-priority-controls input,.mix-priority-display select{background:#0e2537;color:#e3f6f7;border:1px solid #4b697e;border-radius:7px;padding:10px;width:100%}
+.mix-priority-run,.mix-priority-export{display:flex;align-items:center;justify-content:center;gap:10px;background:#215561;color:#eefdf8;border:1px solid #71b2af;border-radius:7px;padding:12px 15px;font-size:12px}
+.mix-priority-run{width:100%}.mix-priority-run:disabled{opacity:.65;cursor:progress}
+.mix-priority-controls p,.mix-priority-limit{font-size:11px;line-height:1.65;color:#8facbd;margin-top:15px}
+.mix-priority-error{color:#ffaebc!important}
+.mix-priority-empty{display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:340px;height:100%;text-align:center;gap:17px;color:#91adbf}
+.mix-priority-empty strong{color:#e3f4ee;font-size:16px}
+.mix-priority-empty p{max-width:350px;font-size:12px;line-height:1.65}
+.mix-priority-results-head{display:flex;justify-content:space-between;flex-wrap:wrap;align-items:center;gap:10px}
+.mix-priority-results-head h3{margin:0}.mix-priority-results-head span{font-size:11px;color:#93b3c4}
+.mix-priority-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.mix-priority-tabs button{background:#152e42;border:1px solid #456176;color:#c5d4dd;font-size:11px;padding:8px 10px;border-radius:7px}
+.mix-priority-tabs button.selected{background:#23535c;border-color:#83e5d7;color:#f2fff9}
+.mix-priority-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:15px 0}
+.mix-priority-summary>div{background:#0a2a3d;border:1px solid #345669;border-radius:8px;padding:11px;min-width:0}
+.mix-priority-summary span{font-size:10px;color:#9fbdc9;display:block}
+.mix-priority-summary strong{color:#a8e8db;font-size:12px;display:block;margin-top:8px;overflow-wrap:anywhere}
+.mix-priority-display{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+.mix-priority-explanation{font-size:12px;line-height:1.65;color:#9dbacc;margin-bottom:19px}
+.mix-priority-explanation strong{color:#e5f4f0}
+.mix-priority-bars{display:flex;flex-direction:column;gap:15px}
+.mix-priority-policy-head{display:flex;justify-content:space-between;gap:9px;color:#e0f0eb;font-size:12px}
+.mix-priority-policy-head span{color:#9deedb;font-variant-numeric:tabular-nums}
+.mix-priority-track{height:10px;background:#294758;border-radius:12px;overflow:hidden;margin:8px 0}
+.mix-priority-track i{height:100%;background:#7cddca;display:block;border-radius:12px}
+.mix-priority-policy small{color:#91b2c0;font-size:10px;line-height:1.6}
+.mix-priority-tradeoffs{border:1px solid #3b6366;border-radius:8px;padding:14px;background:#163840;margin:24px 0}
+.mix-priority-tradeoffs strong{font-size:12px;color:#e8f5f0}
+.mix-priority-tradeoffs p{font-size:12px;color:#a3ead8;margin:10px 0}
+.mix-priority-tradeoffs small{font-size:10px;line-height:1.65;color:#9dbbbd}
+.mix-priority-export{margin-top:17px}
+@media(max-width:940px){.mix-priority-layout{grid-template-columns:1fr}}
+@media(max-width:550px){.mix-priority-summary{grid-template-columns:1fr}.mix-priority-display{grid-template-columns:1fr}}
