@@ -402,3 +402,12 @@ A three-stage deterministic scheduler reserves standard flows until the requeste
 The frozen experiment reuses **3 synthetic fixture seeds × 3 paired failures × 4 graph/mixture families = 36 simulated scenarios** with all methods spending identical exact protection cost. Read the [E2-R7 frozen methods](docs/E2R7_STANDARD_FLOORS.md). See the [first E2-R7 frozen results ledger](docs/E2R7_FROZEN_RESULTS.md) for the modular-network unattainable floors and the priority-versus-standard cost. Run npm test, npm run demo:e2r7, npm run test --prefix site and npm run build --prefix site.
 
 Evidence: SIMULATED / ANALYZE_ONLY / authority NONE. No real QoS guarantee, measured packet service, optima, authorization, E0 routing, or quantum link is demonstrated.
+
+
+## E2-R8 · Exact Optimization Gap (tiny synthetic proof laboratory)
+
+A new offline **Exact Gap** React research section and reproducible npm run demo:e2r8 examine why the previous 47-node E2-R7 *greedy-unattainable* floors are NOT proof of mathematical network infeasibility. Three independently fabricated tiny graphs (fork, bridge, mesh), intact and single-cut fault cases, and four standard-floor targets (0%, 40%, 70%, 100%) yield **24 exact-search comparisons**.
+
+The exhaustive allocator enumerates **every simple path** plus rejection of each whole-flow demand under frozen link capacities. It lexicographically maximizes priority units subject to a standard-service minimum, then total units and artificial route latency. Any exceeded search or fixture bound fails closed with no certified result. The deliberately constructed **fork** graph proves that greedy can miss an attainable 100% standard floor; removing its spare alternate link proves that exact infeasibility is possible on the same tiny model.
+
+This is NOT an exact solution of the earlier 47-node fixtures, a physical service guarantee, a production routing policy or quantum result. The only proof scope is the explicitly bounded tiny synthetic flow model. See [E2-R8 protocol and constructive counterexample](docs/E2R8_EXACT_OPTIMIZATION_GAP.md). Run npm test, npm run demo:e2r8, npm run test --prefix site, npm run build --prefix site. No paid dependencies, E0 execution or security authorization changes.
