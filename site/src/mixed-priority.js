@@ -309,3 +309,15 @@ export function runPriorityMix({
    ]
  };
 }
+
+
+// E2-R7: export the SAME preassigned synthetic service class labels as E2-R6.
+// Only simulated E2-R4 fixture input; no network, identities or authorization.
+export function getSyntheticServiceClasses(fixture){
+  if(!fixture||fixture.schema!=="NBGPocketMesh.E2R4.IrregularFixture.v1"||
+     fixture.origin!=="SIMULATED"||fixture.authority!=="NONE"||
+     !Array.isArray(fixture.demands)||fixture.demands.length!==94)
+    throw new TypeError("Invalid synthetic class fixture.");
+  const labels=classMap(fixture);
+  return Object.fromEntries(labels);
+}
