@@ -68,7 +68,9 @@ export default function ExactGapLab(){
    if(running)return;
    setError("");setResult(null);setRunning(true);
    setTimeout(()=>{
-     try{setResult(compareTinyGap(fixture,failed,floor));}
+     try{
+       if(!seedValid)throw new TypeError("Enter a valid whole-number synthetic seed 0..4294967295.");
+       setResult(compareTinyGap(fixture,failed,floor));}
      catch(e){setError(e?.message??String(e));}
      finally{setRunning(false);}
    },30);
