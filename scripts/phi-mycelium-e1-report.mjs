@@ -1,0 +1,11 @@
+import {mkdirSync,writeFileSync} from 'node:fs';
+import assert from 'node:assert/strict';
+import {evaluate,summarize} from './phi-mycelium-e1.mjs';
+const report=evaluate(),repeat=evaluate();
+assert.equal(report.checksum,repeat.checksum,'same-runtime replay');
+assert.deepEqual(report,repeat);
+const summary=summarize(report);
+mkdirSync('e1-output',{recursive:true});
+writeFileSync('e1-output/full.json',JSON.stringify(report,null,2)+'\n');
+writeFileSync('e1-output/summary.json',JSON.stringify(summary,null,2)+'\n');
+for(const [key,value] of Object.entries(summary)) console.log('E1_RESULT '+key+' '+JSON.stringify(value));
