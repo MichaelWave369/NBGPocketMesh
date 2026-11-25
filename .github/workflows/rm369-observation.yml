@@ -1,0 +1,28 @@
+name: RM369 pinned Altermath interoperability
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  rm369-observation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/checkout@v4
+        with:
+          repository: MichaelWave369/Altermath
+          ref: 9b862f7a3f78b7192b49c43146bd7f5a18fb7272
+          path: rm369-altermath-reference
+          persist-credentials: false
+      - name: Pinned observation contract
+        env:
+          RM369_ALTERMATH_PATH: ${{ github.workspace }}/rm369-altermath-reference
+        run: node --test tests/rm369-observation.test.mjs
