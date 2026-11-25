@@ -1,0 +1,25 @@
+name: PhiMycelium pinned ABL observation interoperability
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  observation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/checkout@v4
+        with:
+          repository: MichaelWave369/Altermath
+          ref: dc085e86a62108dee585b16f5d26cbaedcbf8f49
+          path: mycelium-altermath-reference
+          persist-credentials: false
+      - name: Verify projection against pinned ABL
+        env:
+          MYCELIUM_ALTERMATH_PATH: ${{ github.workspace }}/mycelium-altermath-reference
+        run: node --test tests/phi-mycelium-r5.test.mjs
