@@ -1,0 +1,20 @@
+name: PhiNullMesh R2 relational path consistency
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  algebra:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          node scripts/phi-nullmesh-r2.mjs > /tmp/r2-a.json
+          node scripts/phi-nullmesh-r2.mjs > /tmp/r2-b.json
+          cmp /tmp/r2-a.json /tmp/r2-b.json
+          node -e 'const r=require("/tmp/r2-a.json");if(r.checks!==5326||r.authority!=="NONE"||r.release!=="BLOCKED")process.exit(1);console.log(JSON.stringify(r,null,2))'
