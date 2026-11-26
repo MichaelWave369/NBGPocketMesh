@@ -1,0 +1,20 @@
+name: PhiNullMesh R0 finite boundary algebra
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  algebra:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          node scripts/phi-nullmesh-r0.mjs > /tmp/nullmesh-a.json
+          node scripts/phi-nullmesh-r0.mjs > /tmp/nullmesh-b.json
+          cmp /tmp/nullmesh-a.json /tmp/nullmesh-b.json
+          node -e 'const r=require("/tmp/nullmesh-a.json");if(r.checks!==39950||r.authority!=="NONE")process.exit(1);console.log(JSON.stringify(r,null,2))'
