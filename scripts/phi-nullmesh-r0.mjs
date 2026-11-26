@@ -15,7 +15,11 @@ function laboratory(){
  function read(p){check(p&&Object.keys(p).sort().join(",")==="authority,from,operator,to"&&p.authority==="NONE","pocket shape/authority");return pocket(p.from,p.to,p.operator)}
  function glue(a,b){a=read(a);b=read(b);check(eq(a.to,b.from),"boundary compatibility");return pocket(a.from,b.to,mul(b.operator,a.operator))}
  function norm2(v){v=matrix(v);check(v[0].length===1,"column vector");return v.reduce((s,r)=>s+r[0][0]**2+r[0][1]**2,0)}
- function direct(a,b,c){a=matrix(a);b=matrix(b);c=matrix(c);check(a.length===b[0].length&&b.length===c[0].length,"dimensions");return matrix(c.map(r=>a[0].map((_,j)=>{let sum=z();for(let k=0;k<b.length;k++)for(let l=0;l<a.length;l++)sum=plus(sum,times(times(r[k],b[k][l]),a[l][j]));return sum})))}
+ function direct(a,b,c){
+  a=matrix(a);b=matrix(b);c=matrix(c);check(a.length===b[0].length&&b.length===c[0].length,"dimensions");
+  const bt=(x,y)=>[x[0]*y[0]-x[1]*y[1],x[0]*y[1]+x[1]*y[0]],big=x=>x.map(BigInt);
+  return matrix(c.map(r=>a[0].map((_,j)=>{let re=0n,im=0n;for(let k=0;k<b.length;k++)for(let l=0;l<a.length;l++){const v=bt(bt(big(r[k]),big(b[k][l])),big(a[l][j]));re+=v[0];im+=v[1]}check([re,im].every(n=>n>=-BigInt(LIMIT)&&n<=BigInt(LIMIT)),"contraction coefficient bound");return z(Number(re),Number(im))})));
+ }
  const real=a=>a.map(r=>r.map(v=>z(v))),bd=(id,dim,tick,frame="F0")=>({id,dim,tick,frame});
  function test(){
   let checks=0;const assert=(v,m)=>{check(v,m);checks++},deny=f=>{try{f();return false}catch{return true}};
