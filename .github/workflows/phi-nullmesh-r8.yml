@@ -1,0 +1,40 @@
+name: PhiNullMesh R8 integrated evidence
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  laboratory:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned Lean
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 --max-time 600 -o "$RUNNER_TEMP/lean.tar.zst" https://releases.lean-lang.org/lean4/v4.19.0/lean-4.19.0-linux.tar.zst
+          tar --zstd -xf "$RUNNER_TEMP/lean.tar.zst" -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/lean-4.19.0-linux/bin" >> "$GITHUB_PATH"
+      - name: Reproduce all evidence twice
+        run: |
+          set -euo pipefail
+          python scripts/phi_nullmesh_r8.py self-test
+          python scripts/phi_nullmesh_r8.py build "$RUNNER_TEMP/nullmesh-evidence"
+          python scripts/phi_nullmesh_r8.py verify "$RUNNER_TEMP/nullmesh-evidence"
+          cp -a "$RUNNER_TEMP/nullmesh-evidence" "$RUNNER_TEMP/nullmesh-tampered"
+          printf '\n' >> "$RUNNER_TEMP/nullmesh-tampered/r0.json"
+          if python scripts/phi_nullmesh_r8.py verify "$RUNNER_TEMP/nullmesh-tampered"; then
+            echo "Tampered evidence accepted"; exit 1
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: phi-nullmesh-r8-evidence
+          path: ${{ runner.temp }}/nullmesh-evidence/
+          if-no-files-found: error
