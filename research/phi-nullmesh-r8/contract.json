@@ -1,0 +1,77 @@
+{
+  "schema": "PhiNullMesh.R8.contract.v1",
+  "authority": "NONE",
+  "release": "BLOCKED",
+  "baseline": "17d9c56f631af4118c2007abb3a883b3e28c978b",
+  "sourceBlobs": {
+    "research/phi-nullmesh-r6/fixtures.json": "dca0c862aa7d8424ac2c612263e83a8cd56eb0dc",
+    "research/phi-nullmesh-r7/BoundaryLaws.lean": "c624bb3d4881707f3b69b96ce4970c5e7fc282b3",
+    "research/phi-nullmesh-r7/lean-toolchain": "7aca1d8a939cc24c413eddd793671cdce7070b74",
+    "scripts/phi-nullmesh-r0.mjs": "522746cd78fe98fd0c7f4bf2b9c97e3281d5e3c6",
+    "scripts/phi-nullmesh-r1.mjs": "65c7cb812659abe5f7a8f5182f58e672b4ed2d6c",
+    "scripts/phi-nullmesh-r2.mjs": "8600f7e2bc425fc919d115a47dfbf8000bb59a0d",
+    "scripts/phi-nullmesh-r3.mjs": "548efad8b2b97bb197c6f058b488daaefd9625a8",
+    "scripts/phi-nullmesh-r4.mjs": "3f1d9d77e952e9eba8f3a427cb506323b5fa0fda",
+    "scripts/phi-nullmesh-r5.mjs": "85562f26eaa94b741f992b9e385ffe485d2bd04b",
+    "scripts/phi-nullmesh-r6.mjs": "638364057661a4d7aed30431304a698d9ae27578",
+    "scripts/phi_nullmesh_r6_oracle.py": "9b2a1398fa06169e7b107daabe7eeebcabb4ce60"
+  },
+  "checks": [
+    39950,
+    13956,
+    5326,
+    444,
+    503,
+    204
+  ],
+  "oracle": {
+    "schema": "PhiNullMesh.R6.oracle.v1",
+    "authority": "NONE",
+    "release": "BLOCKED",
+    "matchedRecords": 54,
+    "mutationsRejected": 6,
+    "perStage": [
+      9,
+      9,
+      9,
+      9,
+      9,
+      9
+    ]
+  },
+  "axioms": {
+    "composition_assoc": [],
+    "identity_left": [],
+    "identity_right": [],
+    "reframe_gluing": [
+      "Quot.sound"
+    ],
+    "reframe_roundtrip": [
+      "Quot.sound"
+    ],
+    "path_conservation": [],
+    "potential_path": [],
+    "closed_path_identity": [
+      "Quot.sound"
+    ],
+    "reversible_noncommutativity": []
+  },
+  "historicalEvidence": {
+    "r6": {
+      "head": "e4f30b08c33373c3b7b2bff8872b60f29013c945",
+      "run": 45922453176,
+      "matched": 54,
+      "rejected": 6
+    },
+    "r7": {
+      "head": "809dd94e5b4c6c36d47a0be467ffb1178dc57656",
+      "runs": [
+        45925986012,
+        45925969857
+      ],
+      "job": 140267270410,
+      "lean": "4.19.0",
+      "leanCommit": "6caaee842e94"
+    }
+  }
+}
