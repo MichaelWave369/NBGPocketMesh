@@ -1,0 +1,35 @@
+name: PhiNullMesh R7 formal theorem candidates
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  proofs:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install fixed Lean release
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 --max-time 600 -o "$RUNNER_TEMP/lean.tar.zst" https://releases.lean-lang.org/lean4/v4.19.0/lean-4.19.0-linux.tar.zst
+          tar --zstd -xf "$RUNNER_TEMP/lean.tar.zst" -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/lean-4.19.0-linux/bin" >> "$GITHUB_PATH"
+      - name: Check proof terms and axiom reports
+        run: |
+          set -euo pipefail
+          lean --version | tee "$RUNNER_TEMP/lean-version.txt"
+          grep -F 'version 4.19.0' "$RUNNER_TEMP/lean-version.txt"
+          lean research/phi-nullmesh-r7/BoundaryLaws.lean | tee "$RUNNER_TEMP/lean-proofs.txt"
+          if grep -F 'sorryAx' "$RUNNER_TEMP/lean-proofs.txt"; then exit 1; fi
+          for theorem in composition_assoc identity_left identity_right reframe_gluing reframe_roundtrip path_conservation potential_path closed_path_identity reversible_noncommutativity; do
+            grep -F "PhiNullMesh.R7.$theorem" "$RUNNER_TEMP/lean-proofs.txt"
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: phi-nullmesh-r7-proof-report
+          path: |
+            ${{ runner.temp }}/lean-version.txt
+            ${{ runner.temp }}/lean-proofs.txt
+          if-no-files-found: error
